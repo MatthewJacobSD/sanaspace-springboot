@@ -2,7 +2,7 @@ package io.github.matthewjacobsd.sanaspace.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -27,15 +27,17 @@ public class Medication {
     private String id;
 
     // name
-    @NotNull
+    @Size(min = 3, max = 50, message = "Medication name must be between 3 and 50 characters")
     @Column(name = "name")
     private String name;
 
     // side_effects
+    @Size(min = 10, max = 1000, message = "Side effects must be between 10 and 1000 characters")
     @Column(name = "side_effects")
     private String sideEffects;
 
     // benefits
+    @Size(min = 10, max = 1000, message = "Benefits must be between 10 and 1000 characters")
     @Column(name = "benefits")
     private String benefits;
 

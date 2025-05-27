@@ -3,7 +3,7 @@ package io.github.matthewjacobsd.sanaspace.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -29,24 +29,22 @@ public class Doctor {
     private String id;
 
     // firstname
-    @NotNull
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Size(min = 3, max = 20, message = "First name must be between 3 and 20 characters")
+    @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
     // lastname
-    @Column(name = "last_name", length = 50)
+    @Size(min = 3, max = 20, message = "Last name must be between 3 and 20 characters")
+    @Column(name = "last_name", length = 20)
     private String lastName;
 
     // address
+    @Size(min = 10, max = 100, message = "Address must be between 10 and 100 characters")
     @Column(name = "address", length = 100)
     private String address;
 
     // email
-    @NotNull
-    @Email(
-        message = "Invalid email address",
-        regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$"
-    )
+    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 

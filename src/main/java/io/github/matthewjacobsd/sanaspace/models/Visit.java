@@ -2,6 +2,7 @@ package io.github.matthewjacobsd.sanaspace.models;
 
 import io.github.matthewjacobsd.sanaspace.models.keys.VisitId;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -29,12 +30,14 @@ public class Visit {
     private LocalDate visitDate;
 
     // symptoms
+    @Size(min = 1, max = 50, message = "Symptom must be between 1 and 50 characters")
     @Column(name = "symptoms")
     private String symptoms;
 
     // diagnosis
+    @Size(min = 1, max = 50, message = "Diagnosis must be between 1 and 50 characters")
     @Column(name = "diagnosis")
-    private int diagnosis;
+    private String diagnosis;
 
     // auto completes the visit date based on the visit date composite key
     

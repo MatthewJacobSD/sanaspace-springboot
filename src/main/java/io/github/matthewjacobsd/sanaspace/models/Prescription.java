@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -34,18 +35,19 @@ public class Prescription {
     private LocalDate prescriptionDate;
 
     // dosage amount (min 1)
-    @Min(1)
+    @Size(min = 1, max = 50, message = "Dosage must be between 1 and 50 characters")
     @Column(name = "dosage_amount")
-    private int dosageAmount;
+    private String dosage;
 
     // duration (in days) (min 1)
-    @Min(1)
+    @Size(min = 1, max = 50, message = "Duration must be between 1 and 50 characters")
     @Column(name = "duration")
-    private int duration;
+    private String duration;
 
     // comments
+    @Size(min = 10, max = 1000, message = "Comments must be between 10 and 1000 characters")
     @Column(name = "comments", length = 1000)
-    private String comment;
+    private String comments;
 
     // relationships
 

@@ -20,7 +20,6 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -48,12 +47,13 @@ public class Patient {
     private String id;
 
     // firstname
-    @NotNull
-    @Column(name = "first_name", nullable = false)
+    @Size(min = 3, max = 20, message = "First name must be between 3 and 20 characters")
+    @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
     // lastname
-    @Column(name = "last_name")
+    @Size(min = 3, max = 20, message = "Last name must be between 3 and 20 characters")
+    @Column(name = "last_name", length = 20)
     private String lastName;
 
     // postcode
@@ -61,21 +61,18 @@ public class Patient {
     private String postcode;
 
     // address
+    @Size(min = 10, max = 100, message = "Address must be between 10 and 100 characters")
     @Column(name = "address")
     private String address;
 
     // phone_number (max 12)
-    @Size(max = 12, message = "Phone number must be up to 12 digits")
-    @Pattern(
-        message = "Invalid phone number",
-        regexp =  "^\\+?[0-9]{3}-[0-9]{3}-[0-9]{4}$"
-    )
+    @Pattern(regexp = "[0-9]{3}-[0-9]{3}-[0-9]{4}$", 
+             message = "Phone number must be in the format 123-456-7890")
     @Column(name = "phone_number")
     private String phoneNumber;
 
     // email
-    @NotNull
-    @Email(message = "Invalid email address")
+    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     @Column(name = "email", nullable = false)
     private String email;
 

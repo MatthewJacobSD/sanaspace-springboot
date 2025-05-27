@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanaspace Hospital Database Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+        }
+        section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Sanaspace Hospital Database Application</h1>
+        <p>A Spring Boot application for managing hospital data.</p>
+    </header>
+
+    <section>
+        <h2>Overview</h2>
+        <p>The Sanaspace application is a RESTful API built with Spring Boot, designed to manage hospital-related data including doctors, patients, medications, insurances, prescriptions, and visits. Below is a detailed description of the application's components and how they implement key OOP principles: polymorphism, abstraction, inheritance, and encapsulation.</p>
+    </section>
+
+    <section>
+        <h2>Models (Entities)</h2>
+        <p>The models represent the core data structures persisted in the MariaDB database. Each model corresponds to a table: <code>doctors</code>, <code>insurances</code>, <code>medications</code>, <code>patients</code>, <code>prescriptions</code>, and <code>visits</code>.</p>
+        <ul>
+            <li><strong>Doctor</strong>: Represents a doctor with attributes like <code>firstName</code>, <code>lastName</code>, <code>email</code>, <code>specialization</code>, and <code>experience</code>. Uses enums for specialization and experience.</li>
+            <li><strong>Insurance</strong>: Represents an insurance company with <code>companyName</code>, <code>address</code>, and <code>phoneNumber</code>.</li>
+            <li><strong>Medication</strong>: Represents a medication with <code>name</code>, <code>sideEffects</code>, and <code>benefits</code>.</li>
+            <li><strong>Patient</strong>: Represents a patient with <code>firstName</code>, <code>lastName</code>, <code>email</code>, <code>phoneNumber</code>, and optional <code>insurance</code>.</li>
+            <li><strong>Prescription</strong>: Links a <code>patient</code>, <code>doctor</code>, and <code>medication</code> with details like <code>dosageAmount</code> and <code>prescriptionDate</code>.</li>
+            <li><strong>Visit</strong>: Represents a patient-doctor visit with a composite key (<code>patientId</code>, <code>doctorId</code>, <code>visitDate</code>) and attributes like <code>symptoms</code> and <code>diagnosis</code>.</li>
+        </ul>
+        <p><strong>OOP Principles:</strong></p>
+        <ul>
+            <li><strong>Encapsulation</strong>: Attributes are private with public getters and setters (via Lombok's <code>@Getter</code> and <code>@Setter</code>). For example, <code>Doctor</code>'s <code>email</code> is validated with <code>@Email</code>.</li>
+            <li><strong>Abstraction</strong>: Entities abstract database tables using JPA annotations like <code>@Entity</code> and <code>@Column</code>, hiding database complexity.</li>
+            <li><strong>Inheritance</strong>: Not explicitly used among entities, but JPA's <code>@Inheritance</code> could be applied if entities shared a common fields (e.g., a base <code>Person</code> for <code>Doctor</code> and <code>Patient</code>).).</li>
+            <li><strong>Polymorphism</strong>: Relationships (e.g., <code>@ManyToOne</code> in <code>Prescription</code>) allow flexible interactions. For instance, a <code>Prescription</code> can reference any <code>Doctor</code> or <code>Medication</code>.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Controllers</h2>
+        <p>Controllers handle HTTP requests and map them to service layer operations. Each entity has a dedicated controller (e.g., <code>CDoctor</code>, <code>CPatient</code>) implementing RESTful CRUD operations.</p>
+        <ul>
+            <li><strong>Endpoints</strong>: GET, POST, PUT, PATCH, DELETE for each entity (e.g., <code>/api/doctors</code>, <code>/api/patients/{id}</code>).</li>
+            <li><strong>Example: CDoctor</code></strong>: Manages doctor-related endpoints with logging and validation.</li>
+        </ul>
+        <p><strong>OOP Principles:</strong></p>
+        <ul>
+            <li><strong>Encapsulation</strong>: Controllers encapsulate request handling logic, exposing only REST endpoints.</li>
+            <li><strong>Abstraction</strong>: Use <code>@RestController</code> and <code>@RequestMapping</code> to abstract HTTP handling.</li>
+            <li><strong>Inheritance</strong>: Controllers inherit from Spring's framework classes indirectly through annotations.</li>
+            <li><strong>Polymorphism</strong>: Generic <code>ApiResponseUtil</code> handles responses for all controllers, allowing polymorphic responses.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Services</h2>
+        <p>Services contain business logic, interacting with repositories to perform CRUD operations. Each entity has a service (e.g., <code>SDoctor</code>, <code>SPatient</code>).</p>
+        <ul>
+            <li><strong>Example: SDoctor</strong>: Handles saving, fetching, updating, and deleting doctors with exception handling and logging.</li>
+        </ul>
+        <p><strong>OOP Principles:</strong></p>
+        <ul>
+            <li><strong>Encapsulation</strong>: Business logic is encapsulated within service methods, accessible via public interfaces.</li>
+            <li><strong>Abstraction</strong>: Services abstract database operations, providing a clean interface for controllers.</li>
+            <li><strong>Inheritance</strong>: Services leverage Spring's dependency injection, inheriting behavior from <code>@Service</code>.</li>
+            <li><strong>Polymorphism</strong>: The <code>handleOperation</code> method uses a generic <code>SupplierWithException</code> for flexible operation execution.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Repositories</h2>
+        <p>Repositories provide data access using Spring Data JPA, extending <code>JpaRepository</code> for each entity (e.g., <code>RDoctor</code>, <code>RPatient</code>).</p>
+        <ul>
+            <li><strong>Example: RDoctor</strong>: Provides CRUD operations for the <code>doctors</code> table.</li>
+        </ul>
+        <p><strong>OOP Principles:</strong></p>
+        <ul>
+            <li><strong>Encapsulation</strong>: Database queries are encapsulated within repository interfaces.</li>
+            <li><strong>Abstraction</strong>: <code>JpaRepository</code> abstracts SQL queries, exposing only method signatures.</li>
+            <li><strong>Inheritance</strong>: Repositories inherit CRUD methods from <code>JpaRepository</code>.</li>
+            <li><strong>Polymorphism</strong>: Generic repository methods work with any entity type.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Database Schema</h2>
+        <p>The application uses a MariaDB database with the following tables:</p>
+        <ul>
+            <li><strong>doctors</strong>: Stores doctor details (20 records).</li>
+            <li><strong>insurances</strong>: Stores insurance company details (5 records).</li>
+            <li><strong>medications</strong>: Stores medication details (37 records).</li>
+            <li><strong>patients</strong>: Stores patient details (30 records).</li>
+            <li><strong>prescriptions</strong>: Stores prescription details (40 records).</li>
+            <li><strong>visits</strong>: Stores visit details with composite keys (50 records).</li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Sanaspace. Developed by Matthew Jacob.</p>
+    </footer>
+</body>
+</html>

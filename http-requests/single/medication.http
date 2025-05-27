@@ -1,0 +1,69 @@
+@host = http://localhost:8080
+@contentType = application/json
+
+### GET all medications
+GET {{host}}/api/medications
+
+### GET medication by ID
+@id = 
+GET {{host}}/api/medications/{{id}}
+
+### POST new medication (Original, Updated)
+POST {{host}}/api/medications
+Content-Type: {{contentType}}
+
+{
+  "name": "paracetamol",
+  "sideEffects": "nausea, rash, liver damage (overdose)",
+  "benefits": "relieves mild to moderate pain, reduces fever"
+}
+
+### POST new medication (Test Case 1)
+POST {{host}}/api/medications
+Content-Type: {{contentType}}
+
+{
+  "name": "ibuprofen",
+  "sideEffects": "stomach upset, heartburn, increased bleeding risk",
+  "benefits": "reduces inflammation, relieves pain, lowers fever"
+}
+
+### POST new medication (Test Case 2)
+POST {{host}}/api/medications
+Content-Type: {{contentType}}
+
+{
+  "name": "metformin",
+  "sideEffects": "diarrhea, nausea, lactic acidosis (rare)",
+  "benefits": "manages blood sugar levels in type 2 diabetes"
+}
+
+### POST new medication (Test Case 3)
+POST {{host}}/api/medications
+Content-Type: {{contentType}}
+
+{
+  "name": "atorvastatin",
+  "benefits": "lowers cholesterol, reduces risk of heart attack"
+}
+
+### PATCH medication
+PATCH {{host}}/api/medications/{{id}}
+Content-Type: {{contentType}}
+
+{
+  "sideEffects": "nausea, rash, potential liver damage in overdose"
+}
+
+### PUT medication
+PUT {{host}}/api/medications/{{id}}
+Content-Type: {{contentType}}
+
+{
+  "name": "acetaminophen",
+  "sideEffects": "nausea, rash, liver damage (overdose)",
+  "benefits": "relieves mild to moderate pain, reduces fever"
+}
+
+### DELETE medication
+DELETE {{host}}/api/medications/{{id}}

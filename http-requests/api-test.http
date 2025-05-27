@@ -1,0 +1,300 @@
+@host = http://localhost:8080
+@contentType = application/json
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### DOCTOR ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all doctors
+GET {{host}}/api/doctors
+
+### GET doctor by ID
+@doctorId =
+GET {{host}}/api/doctors/{{doctorId}}
+
+### POST new doctor
+POST {{host}}/api/doctors
+Content-Type: {{contentType}}
+
+{
+  "firstname": "Joe",
+  "lastname": "Doe",
+  "address": "john smith clueless area 13",
+  "email": "joedoe@xample.com",
+  "specialization": "General",
+  "experience": "intermediate"
+}
+
+### PATCH doctor
+PATCH {{host}}/api/doctors/{{doctorId}}
+Content-Type: {{contentType}}
+
+{
+  "firstname": "William",
+  "email": "williamhello@xample.com"
+}
+
+### PUT doctor
+PUT {{host}}/api/doctors/{{doctorId}}
+Content-Type: {{contentType}}
+
+{
+  "firstname": "Micheal",
+  "lastname": "Smith",
+  "address": "where is jow doe street 30",
+  "email": "mith@xample.com",
+  "specialization": "Oncologists",
+  "experience": "intermediate"
+}
+
+### DELETE doctor
+DELETE {{host}}/api/doctors/{{doctorId}}
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### MEDICATIONS ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all medications
+GET {{host}}/api/medications
+
+### GET medication by ID
+@medicationId = 
+GET {{host}}/api/medications/{{medicationId}}
+
+### POST new medication
+POST {{host}}/api/medications
+Content-Type: {{contentType}}
+
+{
+  "name": "paracetamol",
+  "sideEffects": "addiction to its good taste",
+  "benefits": "relieve pain and headache"
+}
+
+### PATCH medication
+PATCH {{host}}/api/medications/{{medicationId}}
+Content-Type: {{contentType}}
+
+{
+  "sideEffects": "dangerous if eaten without a cause"
+}
+
+### PUT medication
+PUT {{host}}/api/medications/{{medicationId}}
+Content-Type: {{contentType}}
+
+{
+  "name": "tachipirina",
+  "sideEffects": "addiction to its good taste",
+  "benefits": "relieve pain and headache"
+}
+
+### DELETE medication
+DELETE {{host}}/api/medications/{{medicationId}}
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### INSURANCE ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all insurances
+GET {{host}}/api/insurances
+
+### GET insurance by ID
+@insuranceId = 
+GET {{host}}/api/insurances/{{insuranceId}}
+
+### POST new insurance
+POST {{host}}/api/insurances
+Content-Type: {{contentType}}
+
+{
+  "company": "nescol",
+  "address": "nescol street 28",
+  "phoneNo": "012-345-6789"
+}
+
+### PATCH insurance
+PATCH {{host}}/api/insurances/{{insuranceId}}
+Content-Type: {{contentType}}
+
+{
+  "company": "rgu"
+}
+
+### PUT insurance
+PUT {{host}}/api/insurances/{{insuranceId}}
+Content-Type: {{contentType}}
+
+{
+  "company": "rgu",
+  "address": "rgu street 28",
+  "phoneNo": "024-135-7698"
+}
+
+### DELETE insurance
+DELETE {{host}}/api/insurances/{{insuranceId}}
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### PATIENT ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all patients
+GET {{host}}/api/patients
+
+### GET patient by ID
+@patientId = 
+GET {{host}}/api/patients/{{patientId}}
+
+### POST new patient
+POST {{host}}/api/patients
+Content-Type: {{contentType}}
+
+{
+  "firstname": "Joe",
+  "lastname": "Doe",
+  "address": "clueless john street 89",
+  "email": "joedoe@xample.com",
+  "postcode": "hw2 kdf3",
+  "phoneNo": "123-456-6789"
+}
+
+### PATCH patient
+PATCH {{host}}/api/patients/{{patientId}}
+Content-Type: {{contentType}}
+
+{
+  "firstname": "Micheal",
+  "lastname": "Smith",
+  "address": "where is jow doe street 30",
+  "email": "mith@xample.com"
+}
+
+### PUT patient
+PUT {{host}}/api/patients/{{patientId}}
+Content-Type: {{contentType}}
+
+{
+  "firstname": "JDerek",
+  "lastname": "Doeol",
+  "address": "why joe ate my biscuit street 89",
+  "email": "noderek@xample.com",
+  "postcode": "24j lkn25",
+  "phoneNo": "012-653-1564",
+  "insurance": {
+    "id": "{{insuranceId}}"
+  }
+}
+
+### DELETE patient
+DELETE {{host}}/api/patients/{{patientId}}
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### PRESCRIPTION ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all prescriptions
+GET {{host}}/api/prescriptions
+
+### GET prescription by ID
+@prescriptionId = 
+GET {{host}}/api/prescriptions/{{prescriptionId}}
+
+### POST new prescription
+POST {{host}}/api/prescriptions
+Content-Type: {{contentType}}
+
+{
+  "prescriptionDate": "2022-07-14",
+  "dosage": 35,
+  "duration": 1,
+  "comment": "im sick",
+  "doctor": {
+    "id": "{{doctorId}}"
+  },
+  "medication": {
+    "id": "{{medicationId}}"
+  },
+  "patient": {
+    "id": "{{patientId}}"
+  }
+}
+
+### PATCH prescription
+PATCH {{host}}/api/prescriptions/{{prescriptionId}}
+Content-Type: {{contentType}}
+
+{
+  "prescriptionDate": "2022-08-30",
+  "dosage": 15,
+  "duration": 10,
+  "comment": "not feeling well, trying to but nothing works"
+}
+
+### PUT prescription
+PUT {{host}}/api/prescriptions/{{prescriptionId}}
+Content-Type: {{contentType}}
+
+{
+  "prescriptionDate": "2023-01-20",
+  "dosage": 15,
+  "duration": 10,
+  "comment": "not feeling well, trying to but nothing works",
+  "doctor": {
+    "id": "{{doctorId}}"
+  },
+  "medication": {
+    "id": "{{medicationId}}"
+  },
+  "patient": {
+    "id": "{{patientId}}"
+  }
+}
+
+### DELETE prescription
+DELETE {{host}}/api/prescriptions/{{prescriptionId}}
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### VISIT ENDPOINTS
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### GET all visits
+GET {{host}}/api/visits
+
+### GET visit by composite ID
+@visitDate = 2025-08-08
+GET {{host}}/api/visits/{{patientId}}/{{doctorId}}/{{visitDate}}
+
+### POST new visit
+POST {{host}}/api/visits
+Content-Type: {{contentType}}
+
+{
+  "id": {
+    "patientId": "{{patientId}}",
+    "doctorId": "{{doctorId}}",
+    "visitDate": "{{visitDate}}"
+  },
+  "symptoms": "flu",
+  "diagnosis": "fever"
+}
+
+### PATCH visit
+PATCH {{host}}/api/visits/{{patientId}}/{{doctorId}}/{{visitDate}}
+Content-Type: {{contentType}}
+
+{
+  "symptoms": "fever and cough",
+  "diagnosis": "flu"
+}
+
+### PUT visit
+PUT {{host}}/api/visits/{{patientId}}/{{doctorId}}/{{visitDate}}
+Content-Type: {{contentType}}
+
+{
+  "symptoms": "headache",
+  "diagnosis": "cold"
+}
+
+### DELETE visit
+DELETE {{host}}/api/visits/{{patientId}}/{{doctorId}}/{{visitDate}}

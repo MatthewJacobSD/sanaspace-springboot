@@ -1,0 +1,93 @@
+@host = http://localhost:8080
+@contentType = application/json
+
+### GET all patients
+GET {{host}}/api/patients
+
+### GET patient by ID
+@id = 87af4083-c998-42c6-81c5-2c0b6e7b50ae
+@insuranceId = c67cf990-9346-4ed6-a865-459736c9ff8b
+GET {{host}}/api/patients/{{id}}
+
+### POST new patient (Original, Updated)
+POST {{host}}/api/patients
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Joe",
+  "lastName": "Doe",
+  "address": "89 John Street, Springfield, IL 62701",
+  "email": "joedoe@example.com",
+  "postcode": "62701",
+  "phoneNumber": "123-456-7890"
+}
+
+### POST new patient (Test Case 1)
+POST {{host}}/api/patients
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Emma",
+  "lastName": "Rodriguez",
+  "address": "245 Maple Avenue, Boston, MA 02118",
+  "email": "emma.rodriguez@healthmail.com",
+  "postcode": "02118",
+  "phoneNumber": "617-555-2345"
+}
+
+### POST new patient (Test Case 2)
+POST {{host}}/api/patients
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Kwame",
+  "lastName": "Nkrumah",
+  "email": "kwame.nkrumah@clinic.org",
+  "phoneNumber": "312-555-6789",
+  "insurance": {
+    "id": "{{insuranceId}}"
+  }
+}
+
+### POST new patient (Test Case 3)
+POST {{host}}/api/patients
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Sophie",
+  "lastName": "Chen",
+  "address": "789 Pine Road, Seattle, WA 98101",
+  "email": "sophie.chen@patient.net",
+  "postcode": "98101",
+  "phoneNumber": "206-555-1234"
+}
+
+### PATCH patient
+PATCH {{host}}/api/patients/{{id}}
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Michael",
+  "lastName": "Smith",
+  "address": "30 Joe Doe Street, Chicago, IL 60601",
+  "email": "michael.smith@example.com"
+}
+
+### PUT patient
+PUT {{host}}/api/patients/{{id}}
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Derek",
+  "lastName": "Doe",
+  "address": "89 Biscuit Street, Springfield, IL 62701",
+  "email": "derek.doe@example.com",
+  "postcode": "62701",
+  "phoneNumber": "012-653-1564",
+  "insurance": {
+    "id": "{{insuranceId}}"
+  }
+}
+
+### DELETE patient
+DELETE {{host}}/api/patients/{{id}}

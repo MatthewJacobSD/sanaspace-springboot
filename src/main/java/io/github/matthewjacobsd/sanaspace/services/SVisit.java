@@ -80,12 +80,12 @@ public class SVisit {
         return handleOperation("partial update visit", startTime, () -> {
             Visit visit = visitR.findById(id).orElseThrow(() -> new ExpVisit(id));
             updates.forEach((field, value) -> {
-                switch (field) {
-                    case "symptoms" -> visit.setSymptoms(value != null ? (String) value : null);
-                    case "diagnosis" -> visit.setDiagnosis(value != null ? ((Number) value).intValue() : 0);
-                    default -> throw new IllegalArgumentException("Invalid field: " + field);
-                }
-            });
+            switch (field) {
+                case "symptoms" -> visit.setSymptoms(value != null ? (String) value : null);
+                case "diagnosis" -> visit.setDiagnosis(value != null ? ((Number) value).intValue() : 0);
+                default -> throw new IllegalArgumentException("Invalid field: " + field);
+            }
+        });
             return visitR.save(visit);
         });
     }

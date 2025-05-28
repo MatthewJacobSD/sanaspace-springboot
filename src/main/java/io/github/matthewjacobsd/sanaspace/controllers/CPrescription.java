@@ -29,7 +29,7 @@ public class CPrescription {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponseUtil<Prescription> createPrescription(@Valid @RequestBody Prescription p) {
         long startTime = logger.startOperation("Saving prescription...",
-                Map.of("dosageAmount", p.getDosageAmount(), "prescriptionDate", p.getPrescriptionDate(),
+                Map.of("dosage", p.getDosage(), "prescriptionDate", p.getPrescriptionDate(),
                        "method", request.getMethod(), "uri", request.getRequestURI()));
         Prescription saved = prescriptionS.savePrescription(p);
         logger.success("Prescription saved successfully", startTime);
@@ -65,7 +65,7 @@ public class CPrescription {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponseUtil<Prescription> updatePrescription(@PathVariable("id") String id, @Valid @RequestBody Prescription p) {
         long startTime = logger.startOperation("Updating prescription...",
-                Map.of("id", id, "dosageAmount", p.getDosageAmount(), "method", request.getMethod(), "uri", request.getRequestURI()));
+                Map.of("id", id, "dosage", p.getDosage(), "method", request.getMethod(), "uri", request.getRequestURI()));
         Prescription updated = prescriptionS.updatePrescription(id, p);
         logger.success("Prescription updated successfully", startTime);
         return ApiResponseUtil.success(updated);

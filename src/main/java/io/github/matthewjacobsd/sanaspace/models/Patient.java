@@ -66,7 +66,7 @@ public class Patient {
     private String address;
 
     // phone_number (max 12)
-    @Pattern(regexp = "[0-9]{3}-[0-9]{3}-[0-9]{4}$", 
+    @Pattern(regexp = "[0-9]{3}-[0-9]{3}-[0-9]{4}", 
              message = "Phone number must be in the format 123-456-7890")
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -83,11 +83,13 @@ public class Patient {
     // relationships
 
     // One-to-Many relationship with Prescription
+    @Builder.Default
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Prescription> prescriptions = new ArrayList<>();
 
     // One-to-Many relationship with Visit
+    @Builder.Default
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Visit> visits = new ArrayList<>();
@@ -112,9 +114,9 @@ public class Patient {
             String digits = phoneNumber.replaceAll("[^0-9]", "");
             // Check if we have at least 10 digits
             if (digits.length() >= 10) {
-                // Format as +XXX-XXX-XXXX (take first 10 digits)
+                // Format as XXX-XXX-XXXX (take first 10 digits)
                 digits = digits.substring(0, 10);
-                phoneNumber = String.format("+%s-%s-%s", 
+                phoneNumber = String.format("%s-%s-%s", 
                     digits.substring(0, 3), 
                     digits.substring(3, 6), 
                     digits.substring(6, 10));

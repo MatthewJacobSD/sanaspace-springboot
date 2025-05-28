@@ -1,20 +1,22 @@
 package io.github.matthewjacobsd.sanaspace.services;
 
-import io.github.matthewjacobsd.sanaspace.exceptions.ExpPrescription;
-import io.github.matthewjacobsd.sanaspace.models.Prescription;
-import io.github.matthewjacobsd.sanaspace.repositories.RPrescription;
-import io.github.matthewjacobsd.sanaspace.utils.GlobalExceptionHandler.SupplierWithException;
-import io.github.matthewjacobsd.sanaspace.utils.LoggerUtil;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
-import java.util.Map;
+import io.github.matthewjacobsd.sanaspace.exceptions.ExpPrescription;
+import io.github.matthewjacobsd.sanaspace.models.Prescription;
+import io.github.matthewjacobsd.sanaspace.repositories.RPrescription;
+import io.github.matthewjacobsd.sanaspace.utils.GlobalExceptionHandler.SupplierWithException;
+import io.github.matthewjacobsd.sanaspace.utils.LoggerUtil;
+
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Validated
@@ -45,7 +47,7 @@ public class SPrescription {
 
     // Saves a new Prescription entity
     public Prescription savePrescription(@NotNull Prescription p) {
-        long startTime = logger.startOperation("Saving prescription...", Map.of("dosageAmount", p.getDosageAmount(), "prescriptionDate", p.getPrescriptionDate()));
+        long startTime = logger.startOperation("Saving prescription...", Map.of("dosage", p.getDosage(), "prescriptionDate", p.getPrescriptionDate()));
         return handleOperation("save prescription", startTime, () -> prescriptionR.save(p));
     }
 
@@ -65,13 +67,13 @@ public class SPrescription {
 
     // Updates a Prescription by ID
     public Prescription updatePrescription(String id, Prescription p) {
-        long startTime = logger.startOperation("Updating prescription...", Map.of("id", id, "dosageAmount", p.getDosageAmount()));
+        long startTime = logger.startOperation("Updating prescription...", Map.of("id", id, "dosage", p.getDosage()));
         return handleOperation("update prescription", startTime, () -> {
             Prescription existingPrescription = prescriptionR.findById(id).orElseThrow(() -> new ExpPrescription(id));
             existingPrescription.setPrescriptionDate(p.getPrescriptionDate());
-            existingPrescription.setDosageAmount(p.getDosageAmount());
+            existingPrescription.setDosage(p.getDosage());
             existingPrescription.setDuration(p.getDuration());
-            existingPrescription.setComment(p.getComment());
+            existingPrescription.setComments(p.getComments());
             existingPrescription.setPatient(p.getPatient());
             existingPrescription.setMedication(p.getMedication());
             existingPrescription.setDoctor(p.getDoctor());
@@ -87,9 +89,9 @@ public class SPrescription {
             updates.forEach((field, value) -> {
                 switch (field) {
                     case "prescriptionDate" -> prescription.setPrescriptionDate(value != null ? LocalDate.parse((String) value) : null);
-                    case "dosageAmount" -> prescription.setDosageAmount(value != null ? ((Number) value).intValue() : 0);
+                    case "dosage" -> prescription.setDosage(value != null ? ((Number) value).intValue() : 0);
                     case "duration" -> prescription.setDuration(value != null ? ((Number) value).intValue() : 0);
-                    case "comment" -> prescription.setComment(value != null ? (String) value : null);
+                    case "comments" -> prescription.setComments(value != null ? (String) value : null);
                     default -> throw new IllegalArgumentException("Invalid field: " + field);
                 }
             });

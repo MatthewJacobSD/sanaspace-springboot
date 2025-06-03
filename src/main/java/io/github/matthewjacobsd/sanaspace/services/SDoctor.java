@@ -71,11 +71,11 @@ public class SDoctor {
             existingDoctor.setLastName(d.getLastName());
             existingDoctor.setAddress(d.getAddress());
             existingDoctor.setEmail(d.getEmail());
-            if (d.getSpecialization() != null && d.getSpecialization() != Doctor.Specialization.GENERAL) {
+            if (d.getSpecialization() != null && d.getSpecialization() != Doctor.Specialization.General) {
                 Doctor.Specialization.valueOf(d.getSpecialization().name());
                 existingDoctor.setSpecialization(d.getSpecialization());
             }
-            if (d.getExperience() != null && d.getExperience() != Doctor.Experience.NOVICE) {
+            if (d.getExperience() != null && d.getExperience() != Doctor.Experience.Novice) {
                 Doctor.Experience.valueOf(d.getExperience().name());
                 existingDoctor.setExperience(d.getExperience());
             }

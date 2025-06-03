@@ -52,39 +52,39 @@ public class Doctor {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "specialization")
-    private Specialization specialization = Specialization.GENERAL;
+    private Specialization specialization = Specialization.General;
 
     // experience(optional, has default value)
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "experience")
-    private Experience experience = Experience.NOVICE;
+    private Experience experience = Experience.Novice;
 
     // Checks doctor if not default
     @Transient
     public boolean isSpecialist() {
-        return specialization != Specialization.GENERAL;
+        return specialization != Specialization.General;
     }
 
     // enums
 
     // Enumeration for specialization
     public enum Specialization {
-        GENERAL, 
-        OPHTHALMOLOGY,
-        ONCOLOGISTS,
-        EMERGENCY,
-        ANAESTHETISTS,
-        INTENSIVECARE,
-        CARDIOLOGY
+        General, 
+        Ophthalmology,
+        Oncologists,
+        Emergency,
+        Anaesthetists,
+        IntensiveCare,
+        Cardiology
     }
 
     // Enumeration for experience
     public enum Experience {
-        NOVICE,
-        JUNIOR,
-        SENIOR,
-        EXPERT
+        Novice,
+        Junior,
+        Senior,
+        Expert
     }
 
     // relationships

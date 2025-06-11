@@ -1,14 +1,14 @@
 @host = http://localhost:8080
 @contentType = application/json
 
-### GET all prescriptions
-GET {{host}}/api/prescriptions
+### GET all prescriptions (starts from 1)
+GET {{host}}/api/prescriptions?page=1&size=10
 
 ### GET prescription by ID
-@id = 9334f375-89cd-4a5c-97c5-0ab725a72bf9
-@doctorId = ff7c0432-89ab-40c5-bc50-f6b77439d9c6
-@medicationId = 326cc44c-2456-4c30-b7fb-53f7c7a78d52
-@patientId = 87af4083-c998-42c6-81c5-2c0b6e7b50ae
+@id = bc74230c-a3a4-4005-805e-af79b7d26e85
+@doctorId = 13c70af8-7676-45df-a2ec-252a03424849
+@medicationId = a2c8b37e-7ec6-47af-b9e6-11acd3b2b7ea
+@patientId = 3f2ae8df-b178-44c1-a086-425a6efce818
 GET {{host}}/api/prescriptions/{{id}}
 
 ### POST new prescription (Original, Updated)
@@ -17,9 +17,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-05-20",
-  "dosageAmount": 500,
+  "dosage": 50,
   "duration": 7,
-  "comment": "Take 500mg twice daily for pain relief",
+  "comments": "Take 500mg twice daily for pain relief",
   "doctor": {
     "id": "{{doctorId}}"
   },
@@ -37,9 +37,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-05-22",
-  "dosageAmount": 1000,
+  "dosage": 1000,
   "duration": 14,
-  "comment": "Take 1000mg daily to manage blood sugar levels",
+  "comments": "Take 1000mg daily to manage blood sugar levels",
   "doctor": {
     "id": "{{doctorId}}"
   },
@@ -57,9 +57,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-05-25",
-  "dosageAmount": 10,
+  "dosage": 10,
   "duration": 30,
-  "comment": "Take 10mg daily to lower cholesterol",
+  "comments": "Take 10mg daily to lower cholesterol",
   "doctor": {
     "id": "b2c3d4e5-f6a7-4b6c-8d9e-2345678901bc"
   },
@@ -77,9 +77,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-05-26",
-  "dosageAmount": 200,
+  "dosage": 200,
   "duration": 10,
-  "comment": "Take 200mg twice daily for inflammation",
+  "comments": "Take 200mg twice daily for inflammation",
   "doctor": {
     "id": "{{doctorId}}"
   },
@@ -97,9 +97,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-06-01",
-  "dosageAmount": 250,
+  "dosage": 25,
   "duration": 5,
-  "comment": "Adjusted to 250mg daily for pain management"
+  "comments": "Adjusted to 250mg daily for pain management"
 }
 
 ### PUT prescription
@@ -108,9 +108,9 @@ Content-Type: {{contentType}}
 
 {
   "prescriptionDate": "2025-06-05",
-  "dosageAmount": 500,
+  "dosage": 50,
   "duration": 7,
-  "comment": "Take 500mg twice daily for pain relief",
+  "comments": "Take 500mg twice daily for pain relief",
   "doctor": {
     "id": "{{doctorId}}"
   },

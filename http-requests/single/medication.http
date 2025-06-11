@@ -1,11 +1,11 @@
 @host = http://localhost:8080
 @contentType = application/json
 
-### GET all medications
-GET {{host}}/api/medications
+### GET all medications(starts with page 1)
+GET {{host}}/api/medications?page=1&size=10
 
-### GET medication by ID
-@id = 
+### GET medication by ID 
+@id = a2c8b37e-7ec6-47af-b9e6-11acd3b2b7ea
 GET {{host}}/api/medications/{{id}}
 
 ### POST new medication (Original, Updated)

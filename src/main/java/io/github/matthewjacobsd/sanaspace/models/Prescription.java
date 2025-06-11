@@ -35,7 +35,7 @@ public class Prescription {
     @Column(name = "prescription_date")
     private LocalDate prescriptionDate;
 
-    // dosage amount (min 1)
+    // dosage amount (mg)
     @Min(1)
     @Max(50)
     @Column(name = "dosage_amount")
@@ -43,7 +43,7 @@ public class Prescription {
 
     // duration (in days) (min 1)
     @Min(1)
-    @Max(50)
+    @Max(100)
     @Column(name = "duration")
     private int duration;
 

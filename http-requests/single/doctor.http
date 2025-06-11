@@ -1,11 +1,11 @@
 @host = http://localhost:8080
 @contentType = application/json
 
-### GET all doctors
-GET {{host}}/api/doctors
+### GET all doctors(starts from 1 page)
+GET {{host}}/api/doctors?page=1&size=10
 
 ### GET doctor by ID
-@id = ff7c0432-89ab-40c5-bc50-f6b77439d9c6 
+@id = 13c70af8-7676-45df-a2ec-252a03424849
 GET {{host}}/api/doctors/{{id}}
 
 ### POST new doctor (Original)
@@ -17,7 +17,7 @@ Content-Type: {{contentType}}
   "lastName": "Doe",
   "address": "13 Clueless Area, Springfield",
   "email": "joedoe@example.com",
-  "experience": "JUNIOR"
+  "experience": "Junior"
 }
 
 ### POST new doctor (Test Case 1)
@@ -29,8 +29,8 @@ Content-Type: {{contentType}}
   "lastName": "Patel",
   "address": "245 Oakwood Lane, Boston, MA 02108",
   "email": "amara.patel@healthcare.org",
-  "specialization": "CARDIOLOGY",
-  "experience": "SENIOR"
+  "specialization": "Cardiology",
+  "experience": "Senior"
 }
 
 ### POST new doctor (Test Case 2)
@@ -42,8 +42,8 @@ Content-Type: {{contentType}}
   "lastName": "O'Connor",
   "address": "789 Pine Street, Seattle, WA 98101",
   "email": "liam.oconnor@medmail.com",
-  "specialization": "OPHTHALMOLOGY",
-  "experience": "EXPERT"
+  "specialization": "Ophthalmology",
+  "experience": "Expert"
 }
 
 ### POST new doctor (Test Case 3)
@@ -54,8 +54,8 @@ Content-Type: {{contentType}}
   "firstName": "Sofia",
   "lastName": "Mendez",
   "email": "sofia.mendez@clinic.net",
-  "specialization": "EMERGENCY",
-  "experience": "JUNIOR"
+  "specialization": "Emergency",
+  "experience": "Junior"
 }
 
 ### PATCH doctor
@@ -76,8 +76,8 @@ Content-Type: {{contentType}}
   "lastName": "Smith",
   "address": "30 Joe Doe Street, Chicago, IL 60601",
   "email": "michael.smith@example.com",
-  "specialization": "ONCOLOGISTS",
-  "experience": "SENIOR"
+  "specialization": "Oncologists",
+  "experience": "Senior"
 }
 
 ### DELETE doctor

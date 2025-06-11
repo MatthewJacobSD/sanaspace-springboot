@@ -1,12 +1,12 @@
 @host = http://localhost:8080
 @contentType = application/json
 
-### GET all patients
-GET {{host}}/api/patients
+### GET all patients(starts from 1)
+GET {{host}}/api/patients?page=1&size=10
 
 ### GET patient by ID
-@id = 87af4083-c998-42c6-81c5-2c0b6e7b50ae
-@insuranceId = c67cf990-9346-4ed6-a865-459736c9ff8b
+@id = 3f2ae8df-b178-44c1-a086-425a6efce818
+@insuranceId = 21fd58b9-6873-4f12-b4c0-877cb5e78ec1 
 GET {{host}}/api/patients/{{id}}
 
 ### POST new patient (Original, Updated)
@@ -19,7 +19,7 @@ Content-Type: {{contentType}}
   "address": "89 John Street, Springfield, IL 62701",
   "email": "joedoe@example.com",
   "postcode": "62701",
-  "phoneNumber": "123-456-7890"
+  "phoneNumber": "1234567890"
 }
 
 ### POST new patient (Test Case 1)

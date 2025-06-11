@@ -1,11 +1,11 @@
 @host = http://localhost:8080
 @contentType = application/json
 
-### GET all insurances
-GET {{host}}/api/insurances
+### GET all insurances(starts from 1 page)
+GET {{host}}/api/insurances?page=1&size=10
 
-### GET insurance by ID
-@id = 
+### GET insurance by ID 
+@id = 21fd58b9-6873-4f12-b4c0-877cb5e78ec1
 GET {{host}}/api/insurances/{{id}}
 
 ### POST new insurance (Original)
@@ -15,7 +15,7 @@ Content-Type: {{contentType}}
 {
   "companyName": "Nescol Insurance",
   "address": "28 Nescol Street, Aberdeen, AB10 1YL",
-  "phoneNumber": "012-345-6789"
+  "phoneNumber": "0123456789"
 }
 
 ### POST new insurance (Test Case 1)
@@ -35,7 +35,7 @@ Content-Type: {{contentType}}
 {
   "companyName": "Aetna Insurance",
   "address": "456 Harmony Road, Chicago, IL 60601",
-  "phoneNumber": "312-555-5678"
+  "phoneNumber": "3125555678"
 }
 
 ### POST new insurance (Test Case 3)
@@ -62,7 +62,7 @@ Content-Type: {{contentType}}
 {
   "companyName": "RGU Insurance",
   "address": "28 RGU Street, Aberdeen, AB11 5YU",
-  "phoneNumber": "+024-135-7698"
+  "phoneNumber": "024-135-7698"
 }
 
 ### DELETE insurance

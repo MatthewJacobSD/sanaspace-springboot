@@ -27,10 +27,6 @@ public class Visit {
     @EmbeddedId
     private VisitId id;
 
-    // visit_date
-    @Transient
-    private LocalDate visitDate;
-
     // symptoms
     @Size(min = 1, max = 50, message = "Symptom must be between 1 and 50 characters")
     @Column(name = "symptoms")
@@ -41,22 +37,6 @@ public class Visit {
     @Max(100000)
     @Column(name = "diagnosis")
     private int diagnosis;
-
-    // auto completes the visit date based on the visit date composite key
-    
-    // Calculate visit date from composite key
-    public LocalDate getVisitDate() {
-        return id != null ? id.getVisitDate() : null;
-    }
-
-    // Update visit date in composite key
-    public void setVisitDate(LocalDate visitDate) {
-        if (id == null) {
-            id = new VisitId();
-        }
-        id.setVisitDate(visitDate);
-    }
-
     // relationships
 
     // Many-to-One relationship with Patient
@@ -70,10 +50,4 @@ public class Visit {
     @JoinColumn(name = "doctor_id", insertable = false, updatable = false, referencedColumnName = "id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Doctor doctor;
-
-    // Ensure proper initialization
-    @PostLoad
-    private void postLoad() {
-        this.visitDate = getVisitDate();
-    }
 }

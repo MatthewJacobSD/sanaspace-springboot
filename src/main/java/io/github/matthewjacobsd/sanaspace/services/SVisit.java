@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -45,11 +46,17 @@ public class SVisit {
 
     // Saves a new Visit entity
     public Visit saveVisit(@NotNull Visit v) {
-        long startTime = logger.startOperation("Saving visit...", Map.of("visitDate", v.getVisitDate()));
+        long startTime = logger.startOperation("Saving visit...", Map.of("visit", v));
         return handleOperation("save visit", startTime, () -> visitR.save(v));
     }
 
     // Retrieves all Visits with pagination
+    public Page<Visit> getPagedVisits(Pageable pageable) {
+        long startTime = logger.startOperation("Fetching visits...", Map.of("page", pageable.getPageNumber(), "size", pageable.getPageSize()));
+        return handleOperation("fetch all visits", startTime, () -> visitR.findAll(pageable));
+    }
+
+    // Retrieves all Visits with pagination (legacy method)
     public Page<Visit> fetchAllVisits(int page, int size) {
         long startTime = logger.startOperation("Fetching visits...", Map.of("page", page, "size", size));
         return handleOperation("fetch all visits", startTime, () ->
@@ -80,12 +87,12 @@ public class SVisit {
         return handleOperation("partial update visit", startTime, () -> {
             Visit visit = visitR.findById(id).orElseThrow(() -> new ExpVisit(id));
             updates.forEach((field, value) -> {
-            switch (field) {
-                case "symptoms" -> visit.setSymptoms(value != null ? (String) value : null);
-                case "diagnosis" -> visit.setDiagnosis(value != null ? ((Number) value).intValue() : 0);
-                default -> throw new IllegalArgumentException("Invalid field: " + field);
-            }
-        });
+                switch (field) {
+                    case "symptoms" -> visit.setSymptoms(value != null ? (String) value : null);
+                    case "diagnosis" -> visit.setDiagnosis(value != null ? ((Number) value).intValue() : 0);
+                    default -> throw new IllegalArgumentException("Invalid field: " + field);
+                }
+            });
             return visitR.save(visit);
         });
     }

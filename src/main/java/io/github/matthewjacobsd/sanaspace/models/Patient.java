@@ -1,5 +1,7 @@
 package io.github.matthewjacobsd.sanaspace.models;
 
+import io.github.matthewjacobsd.sanaspace.utils.PhoneUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class Patient {
-    
+
     // Unique Identifier (UUID)
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -65,9 +67,9 @@ public class Patient {
     @Column(name = "address")
     private String address;
 
-    // phone_number (max 12)
-    @Pattern(regexp = "[0-9]{3}-[0-9]{3}-[0-9]{4}", 
-             message = "Phone number must be in the format 123-456-7890")
+    // phone_number (min 10)
+    @Size(min = 10, message = "Phone number must be at least 10 characters")
+    @Pattern(message = "Invalid phone number format", regexp = "^\\d{3}-?\\d{3}-?\\d{4}$")
     @Column(name = "phone_number")
     private String phoneNumber;
 
@@ -76,7 +78,8 @@ public class Patient {
     @Column(name = "email", nullable = false)
     private String email;
 
-    // Highlight insurerance if patient has one
+    // Highlight insurance if patient has one
+    @Builder.Default
     @Column(name = "patient_insurance")
     private boolean isInsured = false;
 
@@ -100,27 +103,12 @@ public class Patient {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Insurance insurance;
 
-    // auto-refresh insurnace status
+    // auto-refresh insurance status & auto-update phone pattern
     @PrePersist
     @PreUpdate
     private void updateInsuranceStatus() {
         this.isInsured = insurance != null;
+        this.phoneNumber = PhoneUtils.formatPhoneNumber(phoneNumber);
     }
 
-    // auto-update phone pattern
-    private void updatePhoneNumber() {
-        if (phoneNumber != null) {
-            // Remove all non-digit characters
-            String digits = phoneNumber.replaceAll("[^0-9]", "");
-            // Check if we have at least 10 digits
-            if (digits.length() >= 10) {
-                // Format as XXX-XXX-XXXX (take first 10 digits)
-                digits = digits.substring(0, 10);
-                phoneNumber = String.format("%s-%s-%s", 
-                    digits.substring(0, 3), 
-                    digits.substring(3, 6), 
-                    digits.substring(6, 10));
-            }
-        }    
-    }
 }

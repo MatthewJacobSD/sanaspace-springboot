@@ -1,22 +1,21 @@
 package io.github.matthewjacobsd.sanaspace.services;
 
-import java.time.LocalDate;
-import java.util.Map;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import io.github.matthewjacobsd.sanaspace.exceptions.ExpPrescription;
 import io.github.matthewjacobsd.sanaspace.models.Prescription;
 import io.github.matthewjacobsd.sanaspace.repositories.RPrescription;
 import io.github.matthewjacobsd.sanaspace.utils.GlobalExceptionHandler.SupplierWithException;
 import io.github.matthewjacobsd.sanaspace.utils.LoggerUtil;
-
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 @Service
 @Validated
@@ -52,6 +51,12 @@ public class SPrescription {
     }
 
     // Retrieves all Prescriptions with pagination
+    public Page<Prescription> getPagedPrescriptions(Pageable pageable) {
+        long startTime = logger.startOperation("Fetching prescriptions...", Map.of("page", pageable.getPageNumber(), "size", pageable.getPageSize()));
+        return handleOperation("fetch all prescriptions", startTime, () -> prescriptionR.findAll(pageable));
+    }
+
+    // Retrieves all Prescriptions with pagination (legacy method)
     public Page<Prescription> fetchAllPrescriptions(int page, int size) {
         long startTime = logger.startOperation("Fetching prescriptions...", Map.of("page", page, "size", size));
         return handleOperation("fetch all prescriptions", startTime, () ->

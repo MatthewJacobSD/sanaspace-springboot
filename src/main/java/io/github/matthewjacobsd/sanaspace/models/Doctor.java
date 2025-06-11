@@ -68,24 +68,38 @@ public class Doctor {
 
     // enums
 
-    // Enumeration for specialization
-    public enum Specialization {
-        General, 
-        Ophthalmology,
-        Oncologists,
-        Emergency,
-        Anaesthetists,
-        IntensiveCare,
-        Cardiology
-    }
+// Enumeration for specialization
+public enum Specialization {
+    General,           // Primary and general healthcare
+    Ophthalmology,     // Eye and vision care
+    Oncologists,      // Cancer treatment and research
+    Emergency,        // Acute and urgent care
+    Anaesthetists,    // Anesthesia and pain management
+    IntensiveCare,    // Critical care for severe conditions
+    Cardiology,       // Heart and cardiovascular system
+    Neurology,       // Brain and nervous system disorders
+    Orthopedics,     // Musculoskeletal system and injuries
+    Pediatrics,      // Medical care for children
+    Dermatology,     // Skin, hair, and nail conditions
+    Gastroenterology, // Digestive system disorders
+    Psychiatry,      // Mental health and behavioral disorders
+    Radiology,       // Medical imaging and diagnostics
+    Surgery,         // Surgical procedures and interventions
+    Endocrinology,   // Hormone and metabolic disorders nd reproductive system
+}
 
-    // Enumeration for experience
-    public enum Experience {
-        Novice,
-        Junior,
-        Senior,
-        Expert
-    }
+// Enumeration for experience
+public enum Experience {
+    Novice,      // Beginner, less than 1 year of experience
+    Intern,      // Entry-level, 0-1 years in training
+    Resident,    // 1-3 years, post-graduate training
+    Junior,      // 3-5 years, early career professional
+    MidLevel,    // 5-10 years, established practitioner
+    Senior,      // 10+ years, highly experienced
+    Consultant,  // Expert leading teams or projects
+    Specialist,  // Focused expertise in a specific field
+    Expert       // Advanced mastery, 15+ years or recognized authority
+}
 
     // relationships
 

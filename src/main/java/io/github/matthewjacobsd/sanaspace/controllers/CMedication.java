@@ -4,16 +4,23 @@ import io.github.matthewjacobsd.sanaspace.models.Medication;
 import io.github.matthewjacobsd.sanaspace.services.SMedication;
 import io.github.matthewjacobsd.sanaspace.utils.ApiResponseUtil;
 import io.github.matthewjacobsd.sanaspace.utils.LoggerUtil;
+import io.github.matthewjacobsd.sanaspace.utils.PaginationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller for managing Medication entities.
+ * Provides standard CRUD operations with support for pagination and field-level updates.
+ */
 @RestController
 @RequestMapping("/api/medications")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -24,72 +31,175 @@ public class CMedication {
     private final SMedication medicationS;
     private final HttpServletRequest request;
 
-    // Creates a new Medication entity
+    /**
+     * Creates a new Medication.
+     *
+     * @param m The Medication object to be saved.
+     * @return ResponseEntity with ApiResponse containing the saved Medication.
+     */
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseUtil<Medication> createMedication(@Valid @RequestBody Medication m) {
+    public ResponseEntity<ApiResponseUtil<Medication>> createMedication(@Valid @RequestBody Medication m) {
         long startTime = logger.startOperation("Saving medication...",
                 Map.of("name", m.getName(), "method", request.getMethod(), "uri", request.getRequestURI()));
-        Medication saved = medicationS.saveMedication(m);
-        logger.success("Medication saved successfully", startTime);
-        return ApiResponseUtil.success(saved);
+        try {
+            Medication saved = medicationS.saveMedication(m);
+            logger.success("Medication saved successfully", startTime);
+            return new ResponseEntity<>(ApiResponseUtil.success(saved), HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error("Failed to save medication: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to create medication: " + e.getMessage(), 400, errorDetails),
+                HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
-    // Retrieves all Medications with pagination
+    /**
+     * Retrieves a paginated list of Medications.
+     *
+     * @param page Page number (1-based index).
+     * @param limit Number of results per page.
+     * @return ResponseEntity with ApiResponse containing paginated Medication data.
+     */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponseUtil<Page<Medication>> fetchAllMedications(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        long startTime = logger.startOperation("Fetching all medications...",
-                Map.of("page", page, "size", size, "method", request.getMethod(), "uri", request.getRequestURI()));
-        Page<Medication> medications = medicationS.fetchAllMedications(page, size);
-        logger.success("Medications fetched successfully", startTime);
-        return ApiResponseUtil.success(medications, Map.of("page", page, "size", size));
+    public ResponseEntity<ApiResponseUtil<PaginationResponse<Medication>>> getPagedMedications(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        long startTime = logger.startOperation("Fetching medications...",
+                Map.of("page", page, "limit", limit,
+                        "method", request.getMethod(), "uri", request.getRequestURI()));
+        try {
+            PageRequest pageRequest = PageRequest.of(page - 1, limit);
+            Page<Medication> medicationPage = medicationS.getPagedMedications(pageRequest);
+            PaginationResponse<Medication> response = new PaginationResponse<>(medicationPage);
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("page", page);
+            metadata.put("limit", limit);
+            logger.success("Medications fetched successfully", startTime);
+            return new ResponseEntity<>(ApiResponseUtil.success(response, metadata), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to fetch medications: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to fetch medications: " + e.getMessage(), 500, errorDetails),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
-    // Retrieves a specific Medication by ID
+    /**
+     * Retrieves a specific Medication by ID.
+     *
+     * @param id Unique ID of the Medication.
+     * @return ResponseEntity with ApiResponse containing the requested Medication.
+     */
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponseUtil<Medication> fetchMedicationById(@PathVariable("id") String id) {
+    public ResponseEntity<ApiResponseUtil<Medication>> fetchMedicationById(@PathVariable("id") String id) {
         long startTime = logger.startOperation("Fetching medication by ID...",
                 Map.of("id", id, "method", request.getMethod(), "uri", request.getRequestURI()));
-        Medication medication = medicationS.fetchMedicationById(id);
-        logger.success("Medication fetched successfully", startTime);
-        return ApiResponseUtil.success(medication);
+        try {
+            Medication medication = medicationS.fetchMedicationById(id);
+            logger.success("Medication fetched successfully", startTime);
+            return new ResponseEntity<>(ApiResponseUtil.success(medication), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to fetch medication: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to fetch medication: " + e.getMessage(), 404, errorDetails),
+                HttpStatus.NOT_FOUND
+            );
+        }
     }
 
-    // Updates a Medication by ID
+    /**
+     * Updates an existing Medication by ID.
+     *
+     * @param id Unique ID of the Medication.
+     * @param m Updated Medication object.
+     * @return ResponseEntity with ApiResponse containing the updated Medication.
+     */
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponseUtil<Medication> updateMedication(@PathVariable("id") String id, @Valid @RequestBody Medication m) {
+    public ResponseEntity<ApiResponseUtil<Medication>> updateMedication(@PathVariable("id") String id, @Valid @RequestBody Medication m) {
         long startTime = logger.startOperation("Updating medication...",
-                Map.of("id", id, "name", m.getName(), "method", request.getMethod(), "uri", request.getRequestURI()));
-        Medication updated = medicationS.updateMedication(id, m);
-        logger.success("Medication updated successfully", startTime);
-        return ApiResponseUtil.success(updated);
+                Map.of("id", id, "name", m.getName(),
+                        "method", request.getMethod(), "uri", request.getRequestURI()));
+        try {
+            Medication updated = medicationS.updateMedication(id, m);
+            logger.success("Medication updated successfully", startTime);
+            return new ResponseEntity<>(ApiResponseUtil.success(updated), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to update medication: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to update medication: " + e.getMessage(), 400, errorDetails),
+                HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
-    // Partially updates a Medication by ID
+    /**
+     * Partially updates a Medication by ID.
+     *
+     * @param id Unique ID of the Medication.
+     * @param updates Map of fields to be updated.
+     * @return ResponseEntity with ApiResponse containing the updated Medication.
+     */
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponseUtil<Medication> updateMedicationFields(@PathVariable("id") String id,
-                                                             @NotNull @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<ApiResponseUtil<Medication>> updateMedicationFields(@PathVariable("id") String id,
+                                                                             @NotNull @RequestBody Map<String, Object> updates) {
         long startTime = logger.startOperation("Partially updating medication...",
                 Map.of("id", id, "updates", updates.keySet(), "method", request.getMethod(), "uri", request.getRequestURI()));
-        Medication updated = medicationS.updateMedicationFields(id, updates);
-        logger.success("Medication partially updated successfully", startTime);
-        return ApiResponseUtil.success(updated);
+        try {
+            Medication updated = medicationS.updateMedicationFields(id, updates);
+            logger.success("Medication partially updated successfully", startTime);
+            return new ResponseEntity<>(ApiResponseUtil.success(updated), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to partially update medication: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to partially update medication: " + e.getMessage(), 400, errorDetails),
+                HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
-    // Deletes a Medication by ID
+    /**
+     * Deletes a Medication by ID.
+     *
+     * @param id Unique ID of the Medication.
+     * @return ResponseEntity with ApiResponse indicating successful deletion.
+     */
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponseUtil<Map<String, Boolean>> deleteMedication(@PathVariable("id") String id) {
+    public ResponseEntity<ApiResponseUtil<Map<String, Object>>> deleteMedication(@PathVariable("id") String id) {
         long startTime = logger.startOperation("Deleting medication...",
                 Map.of("id", id, "method", request.getMethod(), "uri", request.getRequestURI()));
-        medicationS.deleteMedication(id);
-        logger.success("Medication deleted successfully", startTime);
-        return ApiResponseUtil.success(Map.of("deleted", true));
+        try {
+            medicationS.deleteMedication(id);
+            logger.success("Medication deleted successfully", startTime);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("deleted", true);
+            return new ResponseEntity<>(ApiResponseUtil.success(responseData), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to delete medication: " + e.getMessage(), startTime, e, request.getRequestURI());
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("exception", e.getClass().getSimpleName());
+            errorDetails.put("details", e.getMessage());
+            return new ResponseEntity<>(
+                ApiResponseUtil.error("Failed to delete medication: " + e.getMessage(), 404, errorDetails),
+                HttpStatus.NOT_FOUND
+            );
+        }
     }
 }

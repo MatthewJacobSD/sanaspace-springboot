@@ -1,5 +1,7 @@
 package io.github.matthewjacobsd.sanaspace.models;
 
+import io.github.matthewjacobsd.sanaspace.utils.PhoneUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -37,12 +39,9 @@ public class Insurance {
     @Column(name = "address")
     private String address;
 
-    // phone_number (min 10, max 12)
-    @Size(min = 10, max = 12, message = "Phone number must be up to 12 digits")
-    @Pattern(
-        message = "Invalid phone number",
-        regexp =  "^\\+?[0-9]{3}-[0-9]{3}-[0-9]{4}$"
-    )
+    // phone_number (min 10)
+    @Size(min = 10, message = "Phone number must be at least 10 characters")
+    @Pattern(message = "Invalid phone number format", regexp = "^\\d{3}-?\\d{3}-?\\d{4}$")
     @Column(name = "phone_number")
     private String phoneNumber;
 
@@ -55,22 +54,10 @@ public class Insurance {
     private List<Patient> patients = new ArrayList<>();
 
     // auto-update phone pattern
+    @PrePersist
+    @PreUpdate
     private void updatePhoneNumber() {
-        if (phoneNumber != null) {
-            // Remove all non-digit characters
-            String digits = phoneNumber.replaceAll("[^0-9]", "");
-            // Check if we have at least 10 digits
-            if (digits.length() >= 10) {
-                // Format as +XXX-XXX-XXXX (take first 10 digits)
-                digits = digits.substring(0, 10);
-                phoneNumber = String.format("+%s-%s-%s", 
-                    digits.substring(0, 3), 
-                    digits.substring(3, 6), 
-                    digits.substring(6, 10));
-            } else {
-                System.err.println("Invalid phone number format: " + digits);
-            }
-        }    
+        this.phoneNumber = PhoneUtils.formatPhoneNumber(phoneNumber);
     }
 
 }

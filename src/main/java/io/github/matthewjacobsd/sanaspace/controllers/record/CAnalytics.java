@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller for fetching dashboard analytics/statistics.
+ * Provides endpoints to retrieve count-based metrics for various entities.
+ */
 @RestController
 @RequestMapping("/api/stats")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -25,15 +29,18 @@ public class CAnalytics {
     private final RVisit visitR;
     private final RInsurance insuranceR;
 
+    /**
+     * Retrieves aggregated statistics for display on a dashboard.
+     *
+     * @return Map containing entity names as keys and their respective counts as values.
+     */
     @GetMapping()
     public Map<String, Long> getDashboardStats() {
         long startTime = logger.startOperation("Fetching Dashboard Stats", Map.of(
             "endpoint", "/api/stats",
             "method", "GET"
         ));
-
         Map<String, Long> stats = new HashMap<>();
-
         try {
             // Counting Doctors
             stats.put("doctors", doctorR.count());
@@ -43,7 +50,7 @@ public class CAnalytics {
             stats.put("patients", patientR.count());
             logger.info("Patients count: " + stats.get("patients"));
 
-            // Counting medications
+            // Counting Medications
             stats.put("medications", medicationR.count());
             logger.info("Medications count: " + stats.get("medications"));
 
@@ -61,9 +68,8 @@ public class CAnalytics {
 
             logger.success("Dashboard stats fetched successfully", startTime);
             return stats;
-
         } catch (Exception e) {
-            logger.error("Failed to fetch dashboard stats", startTime, e, 
+            logger.error("Failed to fetch dashboard stats", startTime, e,
                 Map.of("statsAttempted", stats.keySet()).toString());
             throw e; // Re-throw to maintain existing error handling
         }

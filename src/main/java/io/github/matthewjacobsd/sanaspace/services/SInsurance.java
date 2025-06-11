@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -49,6 +50,12 @@ public class SInsurance {
     }
 
     // Retrieves all Insurances with pagination
+    public Page<Insurance> getPagedInsurances(Pageable pageable) {
+        long startTime = logger.startOperation("Fetching insurances...", Map.of("page", pageable.getPageNumber(), "size", pageable.getPageSize()));
+        return handleOperation("fetch all insurances", startTime, () -> insuranceR.findAll(pageable));
+    }
+
+    // Retrieves all Insurances with pagination (legacy method)
     public Page<Insurance> fetchAllInsurances(int page, int size) {
         long startTime = logger.startOperation("Fetching insurances...", Map.of("page", page, "size", size));
         return handleOperation("fetch all insurances", startTime, () ->

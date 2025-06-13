@@ -1,314 +1,261 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanaspace Hospital Database Application</title>
+    <meta charset="UTF-8" />
+    <title>Sanaspace Hospital - Full App Overview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary: #5E2D91;      /* Purple */
+            --secondary: #FF6F00;    /* Orange */
+            --background: #1A1A1A;   /* Dark Grey */
+            --card-bg: #2C2C2C;
+            --text-light: #CCCCCC;
+            --code-bg: #1e1e1e;
+        }
+
+        /* Global reset to remove browser defaults */
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
+            padding: 0;
+            box-sizing: border-box;
+            color: var(--text-light); /* Default to custom light grey */
         }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text-light);
+        }
+
         header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             text-align: center;
-            border-radius: 8px;
+            padding: 30px 20px;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
         }
-        section {
-            margin: 20px 0;
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: var(--card-bg);
+            padding: 10px;
+        }
+
+        nav a {
+            color: var(--text-light) !important; /* Override any inherited blue */
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Ensure all links inherit your custom color */
+        a, a:hover, a:visited, a:active {
+            color: var(--text-light) !important;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 40px 20px;
+        }
+
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
             padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+
         h2 {
-            color: #007bff;
+            color: var(--secondary) !important; /* Orange */
         }
+
+        h3 {
+            color: var(--primary) !important; /* Purple */
+        }
+
         ul {
-            list-style-type: disc;
+            list-style-type: square;
             margin-left: 20px;
         }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: #dcdcdc;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
         footer {
             text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        .code-block {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            overflow-x: auto;
-        }
-        .oop-principle {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e6f7ff;
-            border-left: 4px solid #007bff;
-        }
-        .oop-principle h3 {
-            margin-top: 0;
-            color: #0056b3;
+            padding: 20px;
+            background-color: var(--card-bg);
+            color: #999;
         }
     </style>
 </head>
 <body>
+
     <header>
-        <h1>Welcome to Sanaspace Hospital Database Application</h1>
-        <p>A Spring Boot application for managing hospital data.</p>
+        Sanaspace Hospital Application Documentation
     </header>
 
-    <section>
-        <h2>Overview</h2>
-        <p>The Sanaspace application is a RESTful API built with Spring Boot, designed to manage hospital-related data including doctors, patients, medications, insurances, prescriptions, and visits. The application also includes a console UI for interacting with the system.</p>
-    </section>
+    <main>
+        <!-- Section: Overview -->
+        <div class="section">
+            <h2>Overview</h2>
+            <p>The Sanaspace application is a Spring Boot RESTful API designed to manage hospital data such as doctors, patients, medications, prescriptions, visits, and insurance. It features a console UI for interactive use.</p>
+        </div>
 
-    <section>
-        <h2>Object-Oriented Programming Principles</h2>
-        
-        <div class="oop-principle">
-            <h3>Abstraction</h3>
-            <p>The application uses abstraction to hide complex implementation details:</p>
+        <!-- OOP Principles -->
+        <div class="section">
+            <h2>Object-Oriented Programming (OOP) Principles</h2>
+            <h3>🔒 Encapsulation</h3>
             <ul>
-                <li>Entities abstract database tables using JPA annotations</li>
-                <li>Services provide clean interfaces for business logic</li>
-                <li>Controllers abstract HTTP request handling</li>
-                <li>The ConsoleUI class abstracts user interaction details</li>
+                <li>Private fields in entities like <code>Doctor</code>, <code>Patient</code> are accessed via Lombok-generated getters/setters.</li>
+                <li><code>LoggerUtil</code> encapsulates logging logic so other classes don’t handle it directly.</li>
+                <li><code>EntityLookup</code> wraps entity-specific behavior like displaying and fetching records.</li>
+            </ul>
+
+            <h3>🧱 Abstraction</h3>
+            <ul>
+                <li>Controllers hide database operations behind HTTP endpoints.</li>
+                <li>Services abstract business rules from controllers.</li>
+                <li><code>ConsoleUI</code> hides console input/output formatting and emoji handling.</li>
+                <li><code>EntityLookup<T></code> abstracts selection logic across entities.</li>
+            </ul>
+
+            <h3>🧬 Inheritance</h3>
+            <ul>
+                <li>All repositories extend <code>JpaRepository</code>, inheriting CRUD methods.</li>
+                <li>Custom exceptions extend <code>RuntimeException</code> for reusable error types.</li>
+                <li><code>ServiceRouter</code> implements <code>CommandLineRunner</code> to hook into Spring Boot lifecycle.</li>
+            </ul>
+
+            <h3>🔄 Polymorphism</h3>
+            <ul>
+                <li>Generic repository methods work on any entity type.</li>
+                <li><code>ApiResponseUtil</code> handles success/error responses generically.</li>
+                <li><code>EntityLookup<T></code> uses generic typing to work with multiple entity types.</li>
+                <li><code>handleOperation()</code> accepts functional interfaces like <code>SupplierWithException</code>.</li>
             </ul>
         </div>
 
-        <div class="oop-principle">
-            <h3>Encapsulation</h3>
-            <p>Data and behavior are encapsulated throughout the application:</p>
+        <!-- Entities -->
+        <div class="section">
+            <h2>Models (Entities)</h2>
+            <p>The models represent core data structures persisted in MariaDB:</p>
             <ul>
-                <li>Entity fields are private with public getters/setters (via Lombok)</li>
-                <li>Service classes encapsulate business logic</li>
-                <li>The LoggerUtil encapsulates logging functionality</li>
-                <li>EntityLookup encapsulates entity-specific display logic</li>
+                <li><strong>Doctor</strong>: firstName, lastName, email, specialization, experience</li>
+                <li><strong>Insurance</strong>: companyName, address, phoneNumber</li>
+                <li><strong>Medication</strong>: name, sideEffects, benefits</li>
+                <li><strong>Patient</strong>: firstName, lastName, email, phoneNumber, optional insurance</li>
+                <li><strong>Prescription</strong>: links patient, doctor, medication</li>
+                <li><strong>Visit</strong>: represents patient-doctor visit with composite key</li>
             </ul>
         </div>
 
-        <div class="oop-principle">
-            <h3>Inheritance</h3>
-            <p>The application leverages inheritance in several ways:</p>
+        <!-- Controllers -->
+        <div class="section">
+            <h2>Controllers</h2>
+            <p>Handle HTTP requests and map them to service layer operations:</p>
             <ul>
-                <li>Repositories inherit from JpaRepository</li>
-                <li>Custom exceptions inherit from RuntimeException</li>
-                <li>The ServiceRouter inherits behavior from CommandLineRunner</li>
-                <li>Entities could share a common base class (though not currently implemented)</li>
+                <li><strong>CDoctor</strong>: Manages doctor-related endpoints</li>
+                <li><strong>CPatient</strong>: Manages patient-related endpoints</li>
+                <li><strong>CMedication</strong>: Manages medication-related endpoints</li>
+                <li><strong>CInsurance</strong>: Manages insurance-related endpoints</li>
+                <li><strong>CPrescription</strong>: Manages prescription-related endpoints</li>
+                <li><strong>CVisit</strong>: Manages visit-related endpoints</li>
+                <li><strong>CAnalytics</strong>: Provides dashboard statistics</li>
             </ul>
         </div>
 
-        <div class="oop-principle">
-            <h3>Polymorphism</h3>
-            <p>Polymorphism is used extensively:</p>
+        <!-- Console UI Components -->
+        <div class="section">
+            <h2>Console UI Components</h2>
+            <h3>ConsoleUI</h3>
+            <p>Handles user interface presentation with emoji support and logging:</p>
+            <div class="code-block">
+                public class ConsoleUI {<br>
+                  public static final String DOCTOR_EMOJI = "⚕️";<br>
+                  public static final String PATIENT_EMOJI = "🩺";<br>
+                  // ... other emoji constants<br>
+                  private final LoggerUtil logger = new LoggerUtil(ConsoleUI.class);<br>
+                <br>
+                  public void displayMainMenu() { ... }<br>
+                  public void displayEntityMenu() { ... }<br>
+                  // ... other UI methods<br>
+                }
+            </div>
+
+            <h3>EntityLookup</h3>
+            <p>Provides a generic way to lookup and display entities:</p>
+            <div class="code-block">
+                public class EntityLookup<T> {<br>
+                  private final String entityName;<br>
+                  private final Function<PageRequest, Page<T>> fetchPage;<br>
+                  private final Function<T, String> displayName;<br>
+                <br>
+                  public static EntityLookup<Doctor> doctorLookup(SDoctor doctorService) { ... }<br>
+                  public static EntityLookup<Patient> patientLookup(SPatient patientService) { ... }<br>
+                }
+            </div>
+        </div>
+
+        <!-- Utility Classes -->
+        <div class="section">
+            <h2>Utility Classes</h2>
+            <h3>ApiResponseUtil</h3>
+            <p>Standardizes API responses with success/error handling:</p>
+            <div class="code-block">
+                public class ApiResponseUtil<T> {<br>
+                  private boolean success;<br>
+                  private Status status;<br>
+                  private String message;<br>
+                  private T data;<br>
+                  private Map<String, Object> metadata;<br>
+                <br>
+                  public static <T> ApiResponseUtil<T> success(T data) { ... }<br>
+                  public static <T> ApiResponseUtil<T> error(String message, int code, Map<String, Object> details) { ... }<br>
+                }
+            </div>
+        </div>
+
+        <!-- Database Schema -->
+        <div class="section">
+            <h2>Database Schema</h2>
+            <p>The application uses a MariaDB database with the following tables:</p>
             <ul>
-                <li>Generic repository methods work with any entity type</li>
-                <li>ApiResponseUtil handles responses polymorphically</li>
-                <li>The handleOperation method in services uses SupplierWithException</li>
-                <li>EntityLookup uses functional interfaces for polymorphic behavior</li>
+                <li><strong>doctors</strong>: Stores doctor details</li>
+                <li><strong>insurances</strong>: Stores insurance company details</li>
+                <li><strong>medications</strong>: Stores medication details</li>
+                <li><strong>patients</strong>: Stores patient details</li>
+                <li><strong>prescriptions</strong>: Stores prescription details</li>
+                <li><strong>visits</strong>: Stores visit details with composite keys</li>
             </ul>
         </div>
-    </section>
 
-    <section>
-        <h2>Models (Entities)</h2>
-        <p>The models represent the core data structures persisted in the MariaDB database. Each model corresponds to a table:</p>
-        <ul>
-            <li><strong>Doctor</strong>: Represents a doctor with attributes like firstName, lastName, email, specialization, and experience</li>
-            <li><strong>Insurance</strong>: Represents an insurance company with companyName, address, and phoneNumber</li>
-            <li><strong>Medication</strong>: Represents a medication with name, sideEffects, and benefits</li>
-            <li><strong>Patient</strong>: Represents a patient with firstName, lastName, email, phoneNumber, and optional insurance</li>
-            <li><strong>Prescription</strong>: Links a patient, doctor, and medication with prescription details</li>
-            <li><strong>Visit</strong>: Represents a patient-doctor visit with a composite key</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Controllers</h2>
-        <p>Controllers handle HTTP requests and map them to service layer operations:</p>
-        <ul>
-            <li><strong>CDoctor</strong>: Manages doctor-related endpoints</li>
-            <li><strong>CPatient</strong>: Manages patient-related endpoints</li>
-            <li><strong>CMedication</strong>: Manages medication-related endpoints</li>
-            <li><strong>CInsurance</strong>: Manages insurance-related endpoints</li>
-            <li><strong>CPrescription</strong>: Manages prescription-related endpoints</li>
-            <li><strong>CVisit</strong>: Manages visit-related endpoints</li>
-            <li><strong>CAnalytics</strong>: Provides dashboard statistics</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Services</h2>
-        <p>Services contain business logic and interact with repositories:</p>
-        <ul>
-            <li><strong>SDoctor</strong>: Handles doctor operations with validation and logging</li>
-            <li><strong>SPatient</strong>: Handles patient operations with validation and logging</li>
-            <li><strong>SMedication</strong>: Handles medication operations</li>
-            <li><strong>SInsurance</strong>: Handles insurance operations</li>
-            <li><strong>SPrescription</strong>: Handles prescription operations</li>
-            <li><strong>SVisit</strong>: Handles visit operations with composite key support</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Repositories</h2>
-        <p>Repositories provide data access using Spring Data JPA:</p>
-        <ul>
-            <li><strong>RDoctor</strong>: Doctor entity repository</li>
-            <li><strong>RPatient</strong>: Patient entity repository</li>
-            <li><strong>RMedication</strong>: Medication entity repository</li>
-            <li><strong>RInsurance</strong>: Insurance entity repository</li>
-            <li><strong>RPrescription</strong>: Prescription entity repository</li>
-            <li><strong>RVisit</strong>: Visit entity repository with composite key support</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Console UI Components</h2>
-        <p>The application includes a comprehensive console interface:</p>
-        
-        <h3>ConsoleUI</h3>
-        <p>Handles user interface presentation with emoji support and logging:</p>
-        <div class="code-block">
-            public class ConsoleUI {<br>
-            &nbsp;&nbsp;public static final String DOCTOR_EMOJI = "⚕️";<br>
-            &nbsp;&nbsp;public static final String PATIENT_EMOJI = "🩺";<br>
-            &nbsp;&nbsp;// ... other emoji constants<br>
-            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(ConsoleUI.class);<br>
-            <br>
-            &nbsp;&nbsp;public void displayMainMenu() { ... }<br>
-            &nbsp;&nbsp;public void displayEntityMenu() { ... }<br>
-            &nbsp;&nbsp;// ... other UI methods<br>
-            }
+        <!-- Constructor Usage -->
+        <div class="section">
+            <h2>🏗️ Constructor Usage</h2>
+            <p>Constructors ensure objects are initialized correctly with required dependencies and state.</p>
+            <ul>
+                <li><strong>ConsoleUI(LoggerUtil logger)</strong>: Ensures logging is available before rendering UI elements.</li>
+                <li><strong>EntityLookup(String entityName, Function<PageRequest, Page<T>> fetchPage, Function<T, String> displayName)</strong>: Injects dynamic behavior for each entity type.</li>
+                <li><strong>ServiceRouter(SDoctor doctorService, SPatient patientService, ConsoleUI consoleUI, LookupManager lookupManager)</strong>: Ensures all services are ready at app startup.</li>
+            </ul>
         </div>
-
-        <h3>EntityLookup</h3>
-        <p>Provides a generic way to lookup and display entities:</p>
-        <div class="code-block">
-            public class EntityLookup&lt;T&gt; {<br>
-            &nbsp;&nbsp;private final String entityName;<br>
-            &nbsp;&nbsp;private final Function&lt;PageRequest, Page&lt;T&gt;&gt; fetchPage;<br>
-            &nbsp;&nbsp;private final Function&lt;T, String&gt; displayName;<br>
-            <br>
-            &nbsp;&nbsp;// Factory methods for different entities<br>
-            &nbsp;&nbsp;public static EntityLookup&lt;Doctor&gt; doctorLookup(SDoctor doctorService) { ... }<br>
-            &nbsp;&nbsp;public static EntityLookup&lt;Patient&gt; patientLookup(SPatient patientService) { ... }<br>
-            &nbsp;&nbsp;// ... other factory methods<br>
-            }
-        </div>
-
-        <h3>LookupManager</h3>
-        <p>Manages the entity lookup process with pagination support:</p>
-        <div class="code-block">
-            public class LookupManager {<br>
-            &nbsp;&nbsp;private final ConsoleUI consoleUI;<br>
-            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(LookupManager.class);<br>
-            <br>
-            &nbsp;&nbsp;public &lt;T&gt; String lookupEntity(EntityLookup&lt;T&gt; lookup, String prompt) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;// Implements paginated entity lookup<br>
-            &nbsp;&nbsp;}<br>
-            }
-        </div>
-
-        <h3>ServiceRouter</h3>
-        <p>Routes user commands to appropriate service methods:</p>
-        <div class="code-block">
-            public class ServiceRouter implements CommandLineRunner {<br>
-            &nbsp;&nbsp;private final SDoctor doctorService;<br>
-            &nbsp;&nbsp;private final ConsoleUI consoleUI;<br>
-            &nbsp;&nbsp;private final LookupManager lookupManager;<br>
-            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(ServiceRouter.class);<br>
-            <br>
-            &nbsp;&nbsp;@Override<br>
-            &nbsp;&nbsp;public void run(String... args) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;// Main application loop<br>
-            &nbsp;&nbsp;}<br>
-            <br>
-            &nbsp;&nbsp;private void handleDoctorOperation(int operation) { ... }<br>
-            &nbsp;&nbsp;private void handlePatientOperation(int operation) { ... }<br>
-            &nbsp;&nbsp;// ... other operation handlers<br>
-            }
-        </div>
-    </section>
-
-    <section>
-        <h2>Utility Classes</h2>
-        <p>The application includes several utility classes:</p>
-        
-        <h3>ApiResponseUtil</h3>
-        <p>Standardizes API responses with success/error handling:</p>
-        <div class="code-block">
-            public class ApiResponseUtil&lt;T&gt; {<br>
-            &nbsp;&nbsp;private boolean success;<br>
-            &nbsp;&nbsp;private Status status;<br>
-            &nbsp;&nbsp;private String message;<br>
-            &nbsp;&nbsp;private T data;<br>
-            &nbsp;&nbsp;private Map&lt;String, Object&gt; metadata;<br>
-            <br>
-            &nbsp;&nbsp;public static &lt;T&gt; ApiResponseUtil&lt;T&gt; success(T data) { ... }<br>
-            &nbsp;&nbsp;public static &lt;T&gt; ApiResponseUtil&lt;T&gt; error(String message, int code, Map&lt;String, Object&gt; details) { ... }<br>
-            }
-        </div>
-
-        <h3>LoggerUtil</h3>
-        <p>Provides consistent logging with emoji support:</p>
-        <div class="code-block">
-            public class LoggerUtil {<br>
-            &nbsp;&nbsp;private final Logger logger;<br>
-            <br>
-            &nbsp;&nbsp;public long startOperation(String message, Map&lt;String, Object&gt; metadata) { ... }<br>
-            &nbsp;&nbsp;public void success(String message, long startTime) { ... }<br>
-            &nbsp;&nbsp;public void error(String message, long startTime, Exception e, String requestInfo) { ... }<br>
-            }
-        </div>
-
-        <h3>PaginationResponse</h3>
-        <p>Wraps Spring Page for consistent pagination responses:</p>
-        <div class="code-block">
-            public class PaginationResponse&lt;T&gt; {<br>
-            &nbsp;&nbsp;private int page;<br>
-            &nbsp;&nbsp;private int limit;<br>
-            &nbsp;&nbsp;private List&lt;T&gt; items;<br>
-            &nbsp;&nbsp;private long totalItems;<br>
-            &nbsp;&nbsp;private int totalPages;<br>
-            &nbsp;&nbsp;private boolean isLastPage;<br>
-            <br>
-            &nbsp;&nbsp;public PaginationResponse(Page&lt;T&gt; page) { ... }<br>
-            }
-        </div>
-
-        <h3>PhoneUtils</h3>
-        <p>Handles phone number formatting and validation:</p>
-        <div class="code-block">
-            public class PhoneUtils {<br>
-            &nbsp;&nbsp;public static String formatPhoneNumber(String phoneNumber) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;// Formats phone numbers consistently<br>
-            &nbsp;&nbsp;}<br>
-            }
-        </div>
-    </section>
-
-    <section>
-        <h2>Database Schema</h2>
-        <p>The application uses a MariaDB database with the following tables:</p>
-        <ul>
-            <li><strong>doctors</strong>: Stores doctor details</li>
-            <li><strong>insurances</strong>: Stores insurance company details</li>
-            <li><strong>medications</strong>: Stores medication details</li>
-            <li><strong>patients</strong>: Stores patient details</li>
-            <li><strong>prescriptions</strong>: Stores prescription details</li>
-            <li><strong>visits</strong>: Stores visit details with composite keys</li>
-        </ul>
-    </section>
+    </main>
 
     <footer>
-        <p>&copy; 2025 Sanaspace. Developed by Matthew Jacob.</p>
+        © 2025 Sanaspace Hospital Application | Developed by Matthew Jacob
     </footer>
+
 </body>
 </html>

@@ -93,7 +93,7 @@ public class SPrescription {
             Prescription prescription = prescriptionR.findById(id).orElseThrow(() -> new ExpPrescription(id));
             updates.forEach((field, value) -> {
                 switch (field) {
-                    case "prescriptionDate" -> prescription.setPrescriptionDate(value != null ? LocalDate.parse((String) value) : null);
+                    case "prescriptionDate" -> prescription.setPrescriptionDate(value instanceof LocalDate ? (LocalDate) value : LocalDate.parse((String) value));
                     case "dosage" -> prescription.setDosage(value != null ? ((Number) value).intValue() : 0);
                     case "duration" -> prescription.setDuration(value != null ? ((Number) value).intValue() : 0);
                     case "comments" -> prescription.setComments(value != null ? (String) value : null);

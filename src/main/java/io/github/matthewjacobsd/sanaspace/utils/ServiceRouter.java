@@ -1,20 +1,32 @@
 package io.github.matthewjacobsd.sanaspace.utils;
 
-import io.github.matthewjacobsd.sanaspace.controllers.record.CAnalytics;
-import io.github.matthewjacobsd.sanaspace.models.*;
-import io.github.matthewjacobsd.sanaspace.models.keys.VisitId;
-import io.github.matthewjacobsd.sanaspace.services.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
+
+import io.github.matthewjacobsd.sanaspace.controllers.record.CAnalytics;
+import io.github.matthewjacobsd.sanaspace.models.Doctor;
+import io.github.matthewjacobsd.sanaspace.models.Insurance;
+import io.github.matthewjacobsd.sanaspace.models.Medication;
+import io.github.matthewjacobsd.sanaspace.models.Patient;
+import io.github.matthewjacobsd.sanaspace.models.Prescription;
+import io.github.matthewjacobsd.sanaspace.models.Visit;
+import io.github.matthewjacobsd.sanaspace.models.keys.VisitId;
+import io.github.matthewjacobsd.sanaspace.services.SDoctor;
+import io.github.matthewjacobsd.sanaspace.services.SInsurance;
+import io.github.matthewjacobsd.sanaspace.services.SMedication;
+import io.github.matthewjacobsd.sanaspace.services.SPatient;
+import io.github.matthewjacobsd.sanaspace.services.SPrescription;
+import io.github.matthewjacobsd.sanaspace.services.SVisit;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -47,8 +59,10 @@ public class ServiceRouter implements CommandLineRunner {
         while (true) {
             consoleUI.displayMainMenu();
             int choice = consoleUI.getUserChoice();
-            if (choice == -1) continue; // Skip invalid input
-            if (choice == 0) return; // Exit
+            if (choice == -1)
+                continue; // Skip invalid input
+            if (choice == 0)
+                return; // Exit
             route(choice);
         }
     }
@@ -82,15 +96,18 @@ public class ServiceRouter implements CommandLineRunner {
         while (true) {
             consoleUI.displayEntityMenu(entityName, emoji);
             int choice = consoleUI.getUserChoice();
-            if (choice == -1) continue; // Skip invalid input
-            if (choice == 0) return; // Back to main menu
+            if (choice == -1)
+                continue; // Skip invalid input
+            if (choice == 0)
+                return; // Back to main menu
             handleEntityOperation(entityName.toLowerCase(), choice);
         }
     }
 
     // Routes entity-specific operation to appropriate handler
     public void handleEntityOperation(String entity, int operation) {
-        long startTime = logger.startOperation("Handling " + entity + " operation", Map.of("entity", entity, "operation", operation));
+        long startTime = logger.startOperation("Handling " + entity + " operation",
+                Map.of("entity", entity, "operation", operation));
         try {
             switch (entity) {
                 case "doctor" -> handleDoctorOperation(operation);
@@ -112,7 +129,8 @@ public class ServiceRouter implements CommandLineRunner {
     }
 
     // Helper method for pagination and navigation
-    private <T> void handlePagination(String entityName, Function<PageRequest, Page<T>> fetchPage, Function<T, String> displayItem) {
+    private <T> void handlePagination(String entityName, Function<PageRequest, Page<T>> fetchPage,
+            Function<T, String> displayItem) {
         // Prompt for items per page
         int pageSize = 10; // Default
         consoleUI.showInfo("Enter items per page (e.g., 5, 10, 20) or press Enter for default (10):");
@@ -136,7 +154,8 @@ public class ServiceRouter implements CommandLineRunner {
             PaginationResponse<T> response = new PaginationResponse<>(page);
 
             // Display items
-            consoleUI.showInfo(entityName + " List (Page " + (response.getPage() + 1) + " of " + response.getTotalPages() + ", Total: " + response.getTotalItems() + ")");
+            consoleUI.showInfo(entityName + " List (Page " + (response.getPage() + 1) + " of "
+                    + response.getTotalPages() + ", Total: " + response.getTotalItems() + ")");
             if (response.getItems().isEmpty()) {
                 consoleUI.showWarning("No " + entityName.toLowerCase() + "s found.");
             } else {
@@ -200,26 +219,32 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 2 -> { // View all doctors
                 handlePagination(
-                    "Doctors",
-                    pageRequest -> doctorService.getPagedDoctors(pageRequest),
-                    doctor -> "⚕️ Doctor: " + doctor.getFirstName() + " " + doctor.getLastName()
-                );
+                        "Doctors",
+                        pageRequest -> doctorService.getPagedDoctors(pageRequest),
+                        doctor -> "⚕️ Doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
             }
             case 3 -> { // View single doctor
                 String id = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (id == null) return;
+                if (id == null)
+                    return;
                 Doctor doctor = doctorService.fetchDoctorById(id);
-                System.out.println("⚕️ Doctor: " + doctor.getFirstName() + " " + doctor.getLastName() + ", Email: " + doctor.getEmail());
+                System.out.println("⚕️ Doctor: " + doctor.getFirstName() + " " + doctor.getLastName() + ", Email: "
+                        + doctor.getEmail());
             }
             case 4 -> { // Update doctor
-                String id = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor to Update");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService),
+                        "Select Doctor to Update");
+                if (id == null)
+                    return;
                 Map<String, Object> updates = new HashMap<>();
-                System.out.print("Enter field to update (firstName/lastName/address/email/specialization/experience): ");
+                System.out
+                        .print("Enter field to update (firstName/lastName/address/email/specialization/experience): ");
                 String field = scanner.nextLine();
                 switch (field) {
-                    case "specialization" -> updates.put(field, selectEnum(Doctor.Specialization.class, "Specialization"));
-                    case "experience" -> updates.put(field, selectEnum(Doctor.Experience.class, "Experience"));
+                    case "specialization" ->
+                        updates.put(field, selectEnum(Doctor.Specialization.class, "Specialization").name());
+                    case "experience" -> 
+                        updates.put(field, selectEnum(Doctor.Experience.class, "Experience").name());
                     default -> {
                         System.out.print("Enter new value: ");
                         updates.put(field, scanner.nextLine());
@@ -229,8 +254,10 @@ public class ServiceRouter implements CommandLineRunner {
                 consoleUI.showSuccess("Doctor updated successfully");
             }
             case 5 -> { // Delete doctor
-                String id = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor to Delete");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService),
+                        "Select Doctor to Delete");
+                if (id == null)
+                    return;
                 doctorService.deleteDoctor(id);
                 consoleUI.showSuccess("Doctor deleted successfully");
             }
@@ -254,7 +281,8 @@ public class ServiceRouter implements CommandLineRunner {
                 patient.setPhoneNumber(PhoneUtils.formatPhoneNumber(scanner.nextLine()));
                 System.out.print("Enter email: ");
                 patient.setEmail(scanner.nextLine());
-                String insuranceId = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService), "Select Insurance (or 0 to skip)");
+                String insuranceId = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService),
+                        "Select Insurance (or 0 to skip)");
                 if (insuranceId != null) {
                     patient.setInsurance(insuranceService.fetchInsuranceById(insuranceId));
                 }
@@ -263,20 +291,23 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 2 -> { // View all patients
                 handlePagination(
-                    "Patients",
-                    pageRequest -> patientService.getPagedPatients(pageRequest),
-                    patient -> "🩺 Patient: " + patient.getFirstName() + " " + patient.getLastName()
-                );
+                        "Patients",
+                        pageRequest -> patientService.getPagedPatients(pageRequest),
+                        patient -> "🩺 Patient: " + patient.getFirstName() + " " + patient.getLastName());
             }
             case 3 -> {
                 String id = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (id == null) return;
+                if (id == null)
+                    return;
                 Patient patient = patientService.fetchPatientById(id);
-                System.out.println("🩺 Patient: " + patient.getFirstName() + " " + patient.getLastName() + ", Email: " + patient.getEmail());
+                System.out.println("🩺 Patient: " + patient.getFirstName() + " " + patient.getLastName() + ", Email: "
+                        + patient.getEmail());
             }
             case 4 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient to Update");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient to Update");
+                if (id == null)
+                    return;
                 Map<String, Object> updates = new HashMap<>();
                 System.out.print("Enter field to update (firstName/lastName/postcode/address/phoneNumber/email): ");
                 String field = scanner.nextLine();
@@ -287,8 +318,10 @@ public class ServiceRouter implements CommandLineRunner {
                 consoleUI.showSuccess("Patient updated successfully");
             }
             case 5 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient to Delete");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient to Delete");
+                if (id == null)
+                    return;
                 patientService.deletePatient(id);
                 consoleUI.showSuccess("Patient deleted successfully");
             }
@@ -311,20 +344,23 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 2 -> { // View all medications
                 handlePagination(
-                    "Medications",
-                    pageRequest -> medicationService.getPagedMedications(pageRequest),
-                    medication -> "💊 Medication: " + medication.getName()
-                );
+                        "Medications",
+                        pageRequest -> medicationService.getPagedMedications(pageRequest),
+                        medication -> "💊 Medication: " + medication.getName());
             }
             case 3 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService), "Select Medication");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService),
+                        "Select Medication");
+                if (id == null)
+                    return;
                 Medication medication = medicationService.fetchMedicationById(id);
                 System.out.println("💊 Medication: " + medication.getName());
             }
             case 4 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService), "Select Medication to Update");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService),
+                        "Select Medication to Update");
+                if (id == null)
+                    return;
                 Map<String, Object> updates = new HashMap<>();
                 System.out.print("Enter field to update (name/sideEffects/benefits): ");
                 String field = scanner.nextLine();
@@ -334,8 +370,10 @@ public class ServiceRouter implements CommandLineRunner {
                 consoleUI.showSuccess("Medication updated successfully");
             }
             case 5 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService), "Select Medication to Delete");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService),
+                        "Select Medication to Delete");
+                if (id == null)
+                    return;
                 medicationService.deleteMedication(id);
                 consoleUI.showSuccess("Medication deleted successfully");
             }
@@ -358,20 +396,23 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 2 -> { // View all insurances
                 handlePagination(
-                    "Insurances",
-                    pageRequest -> insuranceService.getPagedInsurances(pageRequest),
-                    insurance -> "🛡️ Insurance: " + insurance.getCompanyName()
-                );
+                        "Insurances",
+                        pageRequest -> insuranceService.getPagedInsurances(pageRequest),
+                        insurance -> "🛡️ Insurance: " + insurance.getCompanyName());
             }
             case 3 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService), "Select Insurance");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService),
+                        "Select Insurance");
+                if (id == null)
+                    return;
                 Insurance insurance = insuranceService.fetchInsuranceById(id);
                 System.out.println("🛡️ Insurance: " + insurance.getCompanyName());
             }
             case 4 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService), "Select Insurance to Update");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService),
+                        "Select Insurance to Update");
+                if (id == null)
+                    return;
                 Map<String, Object> updates = new HashMap<>();
                 System.out.print("Enter field to update (companyName/address/phoneNumber): ");
                 String field = scanner.nextLine();
@@ -382,8 +423,10 @@ public class ServiceRouter implements CommandLineRunner {
                 consoleUI.showSuccess("Insurance updated successfully");
             }
             case 5 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService), "Select Insurance to Delete");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.insuranceLookup(insuranceService),
+                        "Select Insurance to Delete");
+                if (id == null)
+                    return;
                 insuranceService.deleteInsurance(id);
                 consoleUI.showSuccess("Insurance deleted successfully");
             }
@@ -403,34 +446,43 @@ public class ServiceRouter implements CommandLineRunner {
                 prescription.setDuration(Integer.parseInt(scanner.nextLine()));
                 System.out.print("Enter comments: ");
                 prescription.setComments(scanner.nextLine());
-                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (patientId == null) return;
+                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient");
+                if (patientId == null)
+                    return;
                 prescription.setPatient(patientService.fetchPatientById(patientId));
-                String medicationId = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService), "Select Medication");
-                if (medicationId == null) return;
+                String medicationId = lookupManager.lookupEntity(EntityLookup.medicationLookup(medicationService),
+                        "Select Medication");
+                if (medicationId == null)
+                    return;
                 prescription.setMedication(medicationService.fetchMedicationById(medicationId));
                 String doctorId = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (doctorId == null) return;
+                if (doctorId == null)
+                    return;
                 prescription.setDoctor(doctorService.fetchDoctorById(doctorId));
                 prescriptionService.savePrescription(prescription);
                 consoleUI.showSuccess("Prescription created successfully");
             }
             case 2 -> { // View all prescriptions
                 handlePagination(
-                    "Prescriptions",
-                    pageRequest -> prescriptionService.getPagedPrescriptions(pageRequest),
-                    prescription -> "📝 Prescription: " + prescription.getId()
-                );
+                        "Prescriptions",
+                        pageRequest -> prescriptionService.getPagedPrescriptions(pageRequest),
+                        prescription -> "📝 Prescription: " + prescription.getId());
             }
             case 3 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService), "Select Prescription");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService),
+                        "Select Prescription");
+                if (id == null)
+                    return;
                 Prescription prescription = prescriptionService.fetchPrescriptionById(id);
-                System.out.println("📝 Prescription: " + prescription.getId() + ", Date: " + prescription.getPrescriptionDate());
+                System.out.println(
+                        "📝 Prescription: " + prescription.getId() + ", Date: " + prescription.getPrescriptionDate());
             }
             case 4 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService), "Select Prescription to Update");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService),
+                        "Select Prescription to Update");
+                if (id == null)
+                    return;
                 Map<String, Object> updates = new HashMap<>();
                 System.out.print("Enter field to update (prescriptionDate/dosage/duration/comments): ");
                 String field = scanner.nextLine();
@@ -438,15 +490,17 @@ public class ServiceRouter implements CommandLineRunner {
                 String value = scanner.nextLine();
                 switch (field) {
                     case "prescriptionDate" -> updates.put(field, LocalDate.parse(value));
-                    case "dosage", "duration" -> updates.put(field, Integer.valueOf(value));                    
+                    case "dosage", "duration" -> updates.put(field, Integer.valueOf(value));
                     default -> updates.put(field, value);
                 }
                 prescriptionService.updatePrescriptionFields(id, updates);
                 consoleUI.showSuccess("Prescription updated successfully");
             }
             case 5 -> {
-                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService), "Select Prescription to Delete");
-                if (id == null) return;
+                String id = lookupManager.lookupEntity(EntityLookup.prescriptionLookup(prescriptionService),
+                        "Select Prescription to Delete");
+                if (id == null)
+                    return;
                 prescriptionService.deletePrescription(id);
                 consoleUI.showSuccess("Prescription deleted successfully");
             }
@@ -459,11 +513,14 @@ public class ServiceRouter implements CommandLineRunner {
             case 1 -> {
                 Visit visit = new Visit();
                 VisitId id = new VisitId();
-                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (patientId == null) return;
+                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient");
+                if (patientId == null)
+                    return;
                 id.setPatientId(patientId);
                 String doctorId = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (doctorId == null) return;
+                if (doctorId == null)
+                    return;
                 id.setDoctorId(doctorId);
                 System.out.print("Enter visit date (yyyy-MM-dd): ");
                 id.setVisitDate(LocalDate.parse(scanner.nextLine()));
@@ -477,18 +534,21 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 2 -> { // View all visits
                 handlePagination(
-                    "Visits",
-                    pageRequest -> visitService.getPagedVisits(pageRequest),
-                    visit -> "📅 Visit: " + visit.getId().getVisitDate() + ", Patient: " + visit.getId().getPatientId()
-                );
+                        "Visits",
+                        pageRequest -> visitService.getPagedVisits(pageRequest),
+                        visit -> "📅 Visit: " + visit.getId().getVisitDate() + ", Patient: "
+                                + visit.getId().getPatientId());
             }
             case 3 -> {
                 VisitId id = new VisitId();
-                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (patientId == null) return;
+                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient");
+                if (patientId == null)
+                    return;
                 id.setPatientId(patientId);
                 String doctorId = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (doctorId == null) return;
+                if (doctorId == null)
+                    return;
                 id.setDoctorId(doctorId);
                 System.out.print("Enter visit date (yyyy-MM-dd): ");
                 id.setVisitDate(LocalDate.parse(scanner.nextLine()));
@@ -497,11 +557,14 @@ public class ServiceRouter implements CommandLineRunner {
             }
             case 4 -> {
                 VisitId id = new VisitId();
-                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (patientId == null) return;
+                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient");
+                if (patientId == null)
+                    return;
                 id.setPatientId(patientId);
                 String doctorId = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (doctorId == null) return;
+                if (doctorId == null)
+                    return;
                 id.setDoctorId(doctorId);
                 System.out.print("Enter visit date (yyyy-MM-dd): ");
                 id.setVisitDate(LocalDate.parse(scanner.nextLine()));
@@ -509,17 +572,21 @@ public class ServiceRouter implements CommandLineRunner {
                 System.out.print("Enter field to update (symptoms/diagnosis): ");
                 String field = scanner.nextLine();
                 System.out.print("Enter new value: ");
-                updates.put(field, "diagnosis".equals(field) ? Integer.valueOf(scanner.nextLine()) : scanner.nextLine());
+                updates.put(field,
+                        "diagnosis".equals(field) ? Integer.valueOf(scanner.nextLine()) : scanner.nextLine());
                 visitService.updateVisitFields(id, updates);
                 consoleUI.showSuccess("Visit updated successfully");
             }
             case 5 -> {
                 VisitId id = new VisitId();
-                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService), "Select Patient");
-                if (patientId == null) return;
+                String patientId = lookupManager.lookupEntity(EntityLookup.patientLookup(patientService),
+                        "Select Patient");
+                if (patientId == null)
+                    return;
                 id.setPatientId(patientId);
                 String doctorId = lookupManager.lookupEntity(EntityLookup.doctorLookup(doctorService), "Select Doctor");
-                if (doctorId == null) return;
+                if (doctorId == null)
+                    return;
                 id.setDoctorId(doctorId);
                 System.out.print("Enter visit date (yyyy-MM-dd): ");
                 id.setVisitDate(LocalDate.parse(scanner.nextLine()));

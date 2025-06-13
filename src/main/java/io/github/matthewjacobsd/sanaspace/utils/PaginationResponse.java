@@ -17,7 +17,7 @@ public class PaginationResponse<T> {
 
     // Constructor to transform Page<T> to PaginationResponse<T>
     public PaginationResponse(Page<T> page) {
-        this.page = page.getNumber() + 1; // Convert 0-based to 1-based
+        this.page = page.getNumber();
         this.limit = page.getSize();
         this.items = page.getContent();
         this.totalItems = page.getTotalElements();

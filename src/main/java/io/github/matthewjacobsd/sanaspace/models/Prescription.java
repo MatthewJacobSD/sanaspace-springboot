@@ -56,19 +56,19 @@ public class Prescription {
 
     // Many-to-One relationship with Patient
     @ManyToOne
-    @JoinColumn(name = "patient_id", referencedColumnName = "id")
+    @JoinColumn(name = "patient_id", referencedColumnName = "id", nullable = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Patient patient;
 
     // Many-to-One relationship with Medication
     @ManyToOne
-    @JoinColumn(name = "medication_id", referencedColumnName = "id")
+    @JoinColumn(name = "medication_id", referencedColumnName = "id", nullable = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Medication medication;
 
     // Many-to-One relationship with Doctor
     @ManyToOne
-    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id", nullable = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Doctor doctor;
 }

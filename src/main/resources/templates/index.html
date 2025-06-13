@@ -38,6 +38,23 @@
             margin-top: 20px;
             color: #666;
         }
+        .code-block {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        .oop-principle {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border-left: 4px solid #007bff;
+        }
+        .oop-principle h3 {
+            margin-top: 0;
+            color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -48,85 +65,245 @@
 
     <section>
         <h2>Overview</h2>
-        <p>The Sanaspace application is a RESTful API built with Spring Boot, designed to manage hospital-related data including doctors, patients, medications, insurances, prescriptions, and visits. Below is a detailed description of the application's components and how they implement key OOP principles: polymorphism, abstraction, inheritance, and encapsulation.</p>
+        <p>The Sanaspace application is a RESTful API built with Spring Boot, designed to manage hospital-related data including doctors, patients, medications, insurances, prescriptions, and visits. The application also includes a console UI for interacting with the system.</p>
+    </section>
+
+    <section>
+        <h2>Object-Oriented Programming Principles</h2>
+        
+        <div class="oop-principle">
+            <h3>Abstraction</h3>
+            <p>The application uses abstraction to hide complex implementation details:</p>
+            <ul>
+                <li>Entities abstract database tables using JPA annotations</li>
+                <li>Services provide clean interfaces for business logic</li>
+                <li>Controllers abstract HTTP request handling</li>
+                <li>The ConsoleUI class abstracts user interaction details</li>
+            </ul>
+        </div>
+
+        <div class="oop-principle">
+            <h3>Encapsulation</h3>
+            <p>Data and behavior are encapsulated throughout the application:</p>
+            <ul>
+                <li>Entity fields are private with public getters/setters (via Lombok)</li>
+                <li>Service classes encapsulate business logic</li>
+                <li>The LoggerUtil encapsulates logging functionality</li>
+                <li>EntityLookup encapsulates entity-specific display logic</li>
+            </ul>
+        </div>
+
+        <div class="oop-principle">
+            <h3>Inheritance</h3>
+            <p>The application leverages inheritance in several ways:</p>
+            <ul>
+                <li>Repositories inherit from JpaRepository</li>
+                <li>Custom exceptions inherit from RuntimeException</li>
+                <li>The ServiceRouter inherits behavior from CommandLineRunner</li>
+                <li>Entities could share a common base class (though not currently implemented)</li>
+            </ul>
+        </div>
+
+        <div class="oop-principle">
+            <h3>Polymorphism</h3>
+            <p>Polymorphism is used extensively:</p>
+            <ul>
+                <li>Generic repository methods work with any entity type</li>
+                <li>ApiResponseUtil handles responses polymorphically</li>
+                <li>The handleOperation method in services uses SupplierWithException</li>
+                <li>EntityLookup uses functional interfaces for polymorphic behavior</li>
+            </ul>
+        </div>
     </section>
 
     <section>
         <h2>Models (Entities)</h2>
-        <p>The models represent the core data structures persisted in the MariaDB database. Each model corresponds to a table: <code>doctors</code>, <code>insurances</code>, <code>medications</code>, <code>patients</code>, <code>prescriptions</code>, and <code>visits</code>.</p>
+        <p>The models represent the core data structures persisted in the MariaDB database. Each model corresponds to a table:</p>
         <ul>
-            <li><strong>Doctor</strong>: Represents a doctor with attributes like <code>firstName</code>, <code>lastName</code>, <code>email</code>, <code>specialization</code>, and <code>experience</code>. Uses enums for specialization and experience.</li>
-            <li><strong>Insurance</strong>: Represents an insurance company with <code>companyName</code>, <code>address</code>, and <code>phoneNumber</code>.</li>
-            <li><strong>Medication</strong>: Represents a medication with <code>name</code>, <code>sideEffects</code>, and <code>benefits</code>.</li>
-            <li><strong>Patient</strong>: Represents a patient with <code>firstName</code>, <code>lastName</code>, <code>email</code>, <code>phoneNumber</code>, and optional <code>insurance</code>.</li>
-            <li><strong>Prescription</strong>: Links a <code>patient</code>, <code>doctor</code>, and <code>medication</code> with details like <code>dosageAmount</code> and <code>prescriptionDate</code>.</li>
-            <li><strong>Visit</strong>: Represents a patient-doctor visit with a composite key (<code>patientId</code>, <code>doctorId</code>, <code>visitDate</code>) and attributes like <code>symptoms</code> and <code>diagnosis</code>.</li>
-        </ul>
-        <p><strong>OOP Principles:</strong></p>
-        <ul>
-            <li><strong>Encapsulation</strong>: Attributes are private with public getters and setters (via Lombok's <code>@Getter</code> and <code>@Setter</code>). For example, <code>Doctor</code>'s <code>email</code> is validated with <code>@Email</code>.</li>
-            <li><strong>Abstraction</strong>: Entities abstract database tables using JPA annotations like <code>@Entity</code> and <code>@Column</code>, hiding database complexity.</li>
-            <li><strong>Inheritance</strong>: Not explicitly used among entities, but JPA's <code>@Inheritance</code> could be applied if entities shared a common fields (e.g., a base <code>Person</code> for <code>Doctor</code> and <code>Patient</code>).).</li>
-            <li><strong>Polymorphism</strong>: Relationships (e.g., <code>@ManyToOne</code> in <code>Prescription</code>) allow flexible interactions. For instance, a <code>Prescription</code> can reference any <code>Doctor</code> or <code>Medication</code>.</li>
+            <li><strong>Doctor</strong>: Represents a doctor with attributes like firstName, lastName, email, specialization, and experience</li>
+            <li><strong>Insurance</strong>: Represents an insurance company with companyName, address, and phoneNumber</li>
+            <li><strong>Medication</strong>: Represents a medication with name, sideEffects, and benefits</li>
+            <li><strong>Patient</strong>: Represents a patient with firstName, lastName, email, phoneNumber, and optional insurance</li>
+            <li><strong>Prescription</strong>: Links a patient, doctor, and medication with prescription details</li>
+            <li><strong>Visit</strong>: Represents a patient-doctor visit with a composite key</li>
         </ul>
     </section>
 
     <section>
         <h2>Controllers</h2>
-        <p>Controllers handle HTTP requests and map them to service layer operations. Each entity has a dedicated controller (e.g., <code>CDoctor</code>, <code>CPatient</code>) implementing RESTful CRUD operations.</p>
+        <p>Controllers handle HTTP requests and map them to service layer operations:</p>
         <ul>
-            <li><strong>Endpoints</strong>: GET, POST, PUT, PATCH, DELETE for each entity (e.g., <code>/api/doctors</code>, <code>/api/patients/{id}</code>).</li>
-            <li><strong>Example: CDoctor</code></strong>: Manages doctor-related endpoints with logging and validation.</li>
-        </ul>
-        <p><strong>OOP Principles:</strong></p>
-        <ul>
-            <li><strong>Encapsulation</strong>: Controllers encapsulate request handling logic, exposing only REST endpoints.</li>
-            <li><strong>Abstraction</strong>: Use <code>@RestController</code> and <code>@RequestMapping</code> to abstract HTTP handling.</li>
-            <li><strong>Inheritance</strong>: Controllers inherit from Spring's framework classes indirectly through annotations.</li>
-            <li><strong>Polymorphism</strong>: Generic <code>ApiResponseUtil</code> handles responses for all controllers, allowing polymorphic responses.</li>
+            <li><strong>CDoctor</strong>: Manages doctor-related endpoints</li>
+            <li><strong>CPatient</strong>: Manages patient-related endpoints</li>
+            <li><strong>CMedication</strong>: Manages medication-related endpoints</li>
+            <li><strong>CInsurance</strong>: Manages insurance-related endpoints</li>
+            <li><strong>CPrescription</strong>: Manages prescription-related endpoints</li>
+            <li><strong>CVisit</strong>: Manages visit-related endpoints</li>
+            <li><strong>CAnalytics</strong>: Provides dashboard statistics</li>
         </ul>
     </section>
 
     <section>
         <h2>Services</h2>
-        <p>Services contain business logic, interacting with repositories to perform CRUD operations. Each entity has a service (e.g., <code>SDoctor</code>, <code>SPatient</code>).</p>
+        <p>Services contain business logic and interact with repositories:</p>
         <ul>
-            <li><strong>Example: SDoctor</strong>: Handles saving, fetching, updating, and deleting doctors with exception handling and logging.</li>
-        </ul>
-        <p><strong>OOP Principles:</strong></p>
-        <ul>
-            <li><strong>Encapsulation</strong>: Business logic is encapsulated within service methods, accessible via public interfaces.</li>
-            <li><strong>Abstraction</strong>: Services abstract database operations, providing a clean interface for controllers.</li>
-            <li><strong>Inheritance</strong>: Services leverage Spring's dependency injection, inheriting behavior from <code>@Service</code>.</li>
-            <li><strong>Polymorphism</strong>: The <code>handleOperation</code> method uses a generic <code>SupplierWithException</code> for flexible operation execution.</li>
+            <li><strong>SDoctor</strong>: Handles doctor operations with validation and logging</li>
+            <li><strong>SPatient</strong>: Handles patient operations with validation and logging</li>
+            <li><strong>SMedication</strong>: Handles medication operations</li>
+            <li><strong>SInsurance</strong>: Handles insurance operations</li>
+            <li><strong>SPrescription</strong>: Handles prescription operations</li>
+            <li><strong>SVisit</strong>: Handles visit operations with composite key support</li>
         </ul>
     </section>
 
     <section>
         <h2>Repositories</h2>
-        <p>Repositories provide data access using Spring Data JPA, extending <code>JpaRepository</code> for each entity (e.g., <code>RDoctor</code>, <code>RPatient</code>).</p>
+        <p>Repositories provide data access using Spring Data JPA:</p>
         <ul>
-            <li><strong>Example: RDoctor</strong>: Provides CRUD operations for the <code>doctors</code> table.</li>
+            <li><strong>RDoctor</strong>: Doctor entity repository</li>
+            <li><strong>RPatient</strong>: Patient entity repository</li>
+            <li><strong>RMedication</strong>: Medication entity repository</li>
+            <li><strong>RInsurance</strong>: Insurance entity repository</li>
+            <li><strong>RPrescription</strong>: Prescription entity repository</li>
+            <li><strong>RVisit</strong>: Visit entity repository with composite key support</li>
         </ul>
-        <p><strong>OOP Principles:</strong></p>
-        <ul>
-            <li><strong>Encapsulation</strong>: Database queries are encapsulated within repository interfaces.</li>
-            <li><strong>Abstraction</strong>: <code>JpaRepository</code> abstracts SQL queries, exposing only method signatures.</li>
-            <li><strong>Inheritance</strong>: Repositories inherit CRUD methods from <code>JpaRepository</code>.</li>
-            <li><strong>Polymorphism</strong>: Generic repository methods work with any entity type.</li>
-        </ul>
+    </section>
+
+    <section>
+        <h2>Console UI Components</h2>
+        <p>The application includes a comprehensive console interface:</p>
+        
+        <h3>ConsoleUI</h3>
+        <p>Handles user interface presentation with emoji support and logging:</p>
+        <div class="code-block">
+            public class ConsoleUI {<br>
+            &nbsp;&nbsp;public static final String DOCTOR_EMOJI = "⚕️";<br>
+            &nbsp;&nbsp;public static final String PATIENT_EMOJI = "🩺";<br>
+            &nbsp;&nbsp;// ... other emoji constants<br>
+            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(ConsoleUI.class);<br>
+            <br>
+            &nbsp;&nbsp;public void displayMainMenu() { ... }<br>
+            &nbsp;&nbsp;public void displayEntityMenu() { ... }<br>
+            &nbsp;&nbsp;// ... other UI methods<br>
+            }
+        </div>
+
+        <h3>EntityLookup</h3>
+        <p>Provides a generic way to lookup and display entities:</p>
+        <div class="code-block">
+            public class EntityLookup&lt;T&gt; {<br>
+            &nbsp;&nbsp;private final String entityName;<br>
+            &nbsp;&nbsp;private final Function&lt;PageRequest, Page&lt;T&gt;&gt; fetchPage;<br>
+            &nbsp;&nbsp;private final Function&lt;T, String&gt; displayName;<br>
+            <br>
+            &nbsp;&nbsp;// Factory methods for different entities<br>
+            &nbsp;&nbsp;public static EntityLookup&lt;Doctor&gt; doctorLookup(SDoctor doctorService) { ... }<br>
+            &nbsp;&nbsp;public static EntityLookup&lt;Patient&gt; patientLookup(SPatient patientService) { ... }<br>
+            &nbsp;&nbsp;// ... other factory methods<br>
+            }
+        </div>
+
+        <h3>LookupManager</h3>
+        <p>Manages the entity lookup process with pagination support:</p>
+        <div class="code-block">
+            public class LookupManager {<br>
+            &nbsp;&nbsp;private final ConsoleUI consoleUI;<br>
+            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(LookupManager.class);<br>
+            <br>
+            &nbsp;&nbsp;public &lt;T&gt; String lookupEntity(EntityLookup&lt;T&gt; lookup, String prompt) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;// Implements paginated entity lookup<br>
+            &nbsp;&nbsp;}<br>
+            }
+        </div>
+
+        <h3>ServiceRouter</h3>
+        <p>Routes user commands to appropriate service methods:</p>
+        <div class="code-block">
+            public class ServiceRouter implements CommandLineRunner {<br>
+            &nbsp;&nbsp;private final SDoctor doctorService;<br>
+            &nbsp;&nbsp;private final ConsoleUI consoleUI;<br>
+            &nbsp;&nbsp;private final LookupManager lookupManager;<br>
+            &nbsp;&nbsp;private final LoggerUtil logger = new LoggerUtil(ServiceRouter.class);<br>
+            <br>
+            &nbsp;&nbsp;@Override<br>
+            &nbsp;&nbsp;public void run(String... args) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;// Main application loop<br>
+            &nbsp;&nbsp;}<br>
+            <br>
+            &nbsp;&nbsp;private void handleDoctorOperation(int operation) { ... }<br>
+            &nbsp;&nbsp;private void handlePatientOperation(int operation) { ... }<br>
+            &nbsp;&nbsp;// ... other operation handlers<br>
+            }
+        </div>
+    </section>
+
+    <section>
+        <h2>Utility Classes</h2>
+        <p>The application includes several utility classes:</p>
+        
+        <h3>ApiResponseUtil</h3>
+        <p>Standardizes API responses with success/error handling:</p>
+        <div class="code-block">
+            public class ApiResponseUtil&lt;T&gt; {<br>
+            &nbsp;&nbsp;private boolean success;<br>
+            &nbsp;&nbsp;private Status status;<br>
+            &nbsp;&nbsp;private String message;<br>
+            &nbsp;&nbsp;private T data;<br>
+            &nbsp;&nbsp;private Map&lt;String, Object&gt; metadata;<br>
+            <br>
+            &nbsp;&nbsp;public static &lt;T&gt; ApiResponseUtil&lt;T&gt; success(T data) { ... }<br>
+            &nbsp;&nbsp;public static &lt;T&gt; ApiResponseUtil&lt;T&gt; error(String message, int code, Map&lt;String, Object&gt; details) { ... }<br>
+            }
+        </div>
+
+        <h3>LoggerUtil</h3>
+        <p>Provides consistent logging with emoji support:</p>
+        <div class="code-block">
+            public class LoggerUtil {<br>
+            &nbsp;&nbsp;private final Logger logger;<br>
+            <br>
+            &nbsp;&nbsp;public long startOperation(String message, Map&lt;String, Object&gt; metadata) { ... }<br>
+            &nbsp;&nbsp;public void success(String message, long startTime) { ... }<br>
+            &nbsp;&nbsp;public void error(String message, long startTime, Exception e, String requestInfo) { ... }<br>
+            }
+        </div>
+
+        <h3>PaginationResponse</h3>
+        <p>Wraps Spring Page for consistent pagination responses:</p>
+        <div class="code-block">
+            public class PaginationResponse&lt;T&gt; {<br>
+            &nbsp;&nbsp;private int page;<br>
+            &nbsp;&nbsp;private int limit;<br>
+            &nbsp;&nbsp;private List&lt;T&gt; items;<br>
+            &nbsp;&nbsp;private long totalItems;<br>
+            &nbsp;&nbsp;private int totalPages;<br>
+            &nbsp;&nbsp;private boolean isLastPage;<br>
+            <br>
+            &nbsp;&nbsp;public PaginationResponse(Page&lt;T&gt; page) { ... }<br>
+            }
+        </div>
+
+        <h3>PhoneUtils</h3>
+        <p>Handles phone number formatting and validation:</p>
+        <div class="code-block">
+            public class PhoneUtils {<br>
+            &nbsp;&nbsp;public static String formatPhoneNumber(String phoneNumber) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;// Formats phone numbers consistently<br>
+            &nbsp;&nbsp;}<br>
+            }
+        </div>
     </section>
 
     <section>
         <h2>Database Schema</h2>
         <p>The application uses a MariaDB database with the following tables:</p>
         <ul>
-            <li><strong>doctors</strong>: Stores doctor details (20 records).</li>
-            <li><strong>insurances</strong>: Stores insurance company details (5 records).</li>
-            <li><strong>medications</strong>: Stores medication details (37 records).</li>
-            <li><strong>patients</strong>: Stores patient details (30 records).</li>
-            <li><strong>prescriptions</strong>: Stores prescription details (40 records).</li>
-            <li><strong>visits</strong>: Stores visit details with composite keys (50 records).</li>
+            <li><strong>doctors</strong>: Stores doctor details</li>
+            <li><strong>insurances</strong>: Stores insurance company details</li>
+            <li><strong>medications</strong>: Stores medication details</li>
+            <li><strong>patients</strong>: Stores patient details</li>
+            <li><strong>prescriptions</strong>: Stores prescription details</li>
+            <li><strong>visits</strong>: Stores visit details with composite keys</li>
         </ul>
     </section>
 

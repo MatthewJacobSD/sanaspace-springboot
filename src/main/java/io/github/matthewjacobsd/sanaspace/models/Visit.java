@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import lombok.*;
 
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 // Table structure
@@ -28,8 +26,7 @@ public class Visit {
     private VisitId id;
 
     // symptoms
-    @Size(min = 1, max = 50, message = "Symptom must be between 1 and 50 characters")
-    @Column(name = "symptoms")
+    @Column(name = "symptoms", length = 255)
     private String symptoms;
 
     // diagnosis (min 1)

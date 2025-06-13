@@ -99,7 +99,7 @@ public class Patient {
 
     // Many-to-One relationship with Insurance
     @ManyToOne
-    @JoinColumn(name = "insurance_id")
+    @JoinColumn(name = "insurance_id", referencedColumnName = "id", nullable = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Insurance insurance;
 

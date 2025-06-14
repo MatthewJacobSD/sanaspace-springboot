@@ -5,109 +5,102 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Scanner;
 
-@Component
+@Component // Marks this class as a Spring component for dependency injection
 public class ConsoleUI {
 
-    private final Scanner scanner = new Scanner(System.in); // Scanner for user input
+    private final Scanner scanner = new Scanner(System.in); // Initializes Scanner for user input
     private final LoggerUtil logger = new LoggerUtil(ConsoleUI.class); // Logger for tracking operations
 
-    // Emoji constants (made public for ServiceRouter access)
-    public static final String DOCTOR_EMOJI = "⚕️"; // Emoji for doctor menu
-    public static final String PATIENT_EMOJI = "🩺"; // Emoji for patient menu
-    public static final String MEDICATION_EMOJI = "💊"; // Emoji for medication menu
-    public static final String INSURANCE_EMOJI = "🛡️"; // Emoji for insurance menu
-    public static final String PRESCRIPTION_EMOJI = "📝"; // Emoji for prescription menu
-    public static final String VISIT_EMOJI = "📅"; // Emoji for visit menu
-    public static final String STATS_EMOJI = "📊"; // Emoji for analytics menu
-    public static final String SUCCESS_EMOJI = "✅"; // Emoji for success messages
-    public static final String ERROR_EMOJI = "❌"; // Emoji for error messages
-    public static final String WARNING_EMOJI = "⚠️"; // Emoji for warning messages
-    public static final String INFO_EMOJI = "ℹ️"; // Emoji for info messages
-    public static final String DIVIDER = "━".repeat(40); // Divider line for UI formatting
+    // Text constants instead of emojis
+    public static final String SUCCESS_EMOJI = "[OK]"; // Success message prefix
+    public static final String ERROR_EMOJI = "[ERR]"; // Error message prefix
+    public static final String WARNING_EMOJI = "[WARN]"; // Warning message prefix
+    public static final String INFO_EMOJI = "[INFO]"; // Info message prefix
+    public static final String DIVIDER = "=".repeat(40); // Divider line for UI formatting
 
-    // Displays the main menu
-    public void displayMainMenu() {
-        long startTime = logger.startOperation("Displaying main menu", Map.of()); // Log start
-        System.out.println("\n" + DIVIDER); // Print top divider
-        System.out.println("🔥 Main Menu:"); // Print menu header
-        System.out.println(DIVIDER); // Print divider
-        System.out.println("1. " + DOCTOR_EMOJI + " Doctors"); // Doctor option
-        System.out.println("2. " + PATIENT_EMOJI + " Patients"); // Patient option
-        System.out.println("3. " + MEDICATION_EMOJI + " Medications"); // Medication option
-        System.out.println("4. " + INSURANCE_EMOJI + " Insurances"); // Insurance option
-        System.out.println("5. " + PRESCRIPTION_EMOJI + " Prescriptions"); // Prescription option
-        System.out.println("6. " + VISIT_EMOJI + " Visits"); // Visit option
-        System.out.println("7. " + STATS_EMOJI + " Analytics"); // Analytics option
-        System.out.println("0. ♨️ Exit"); // Exit option
-        System.out.print("🟢 Choose an option: "); // Prompt for input
-        logger.success("Main menu displayed successfully", startTime); // Log success
+    public void displayMainMenu() { // Displays the main menu
+        long startTime = logger.startOperation("Displaying main menu", Map.of()); // Logs start of menu display
+        System.out.println("\n" + DIVIDER); // Prints divider
+        System.out.println("Main Menu:"); // Prints menu title
+        System.out.println(DIVIDER); // Prints divider
+        System.out.println("1. " + " Doctors"); // Option for doctors menu
+        System.out.println("2. " + " Patients"); // Option for patients menu
+        System.out.println("3. " + " Medications"); // Option for medications menu
+        System.out.println("4. " + " Insurances"); // Option for insurances menu
+        System.out.println("5. " + " Prescriptions"); // Option for prescriptions menu
+        System.out.println("6. " + " Visits"); // Option for visits menu
+        System.out.println("7. " + " Analytics"); // Option for analytics menu
+        System.out.println("0. Exit"); // Option to exit
+        System.out.print("Choose an option: "); // Prompts user for input
+        logger.success("Main menu displayed successfully", startTime); // Logs successful menu display
     }
 
-    // Displays entity-specific menu
-    public void displayEntityMenu(String entityName, String emoji) {
-        long startTime = logger.startOperation("Displaying " + entityName + " menu", Map.of("entity", entityName)); // Log start
-        System.out.println("\n" + DIVIDER); // Print top divider
-        System.out.println(emoji + " " + entityName + " Menu:"); // Print menu header
-        System.out.println(DIVIDER); // Print divider
-        System.out.println("1. Create new " + entityName); // Create option
-        System.out.println("2. View all " + entityName + "s"); // View all option
-        System.out.println("3. View single " + entityName); // View single option
-        System.out.println("4. Update " + entityName); // Update option
-        System.out.println("5. Delete " + entityName); // Delete option
-        System.out.println("0. Back to main menu"); // Back option
-        System.out.print("🟢 Choose an option: "); // Prompt for input
-        logger.success(entityName + " menu displayed successfully", startTime); // Log success
+    public void displayEntityMenu(String entityName, String prefix, String[] options) { // Displays custom entity menu with options
+        System.out.println("\n" + prefix + " Menu:"); // Prints menu title with prefix
+        for (int i = 0; i < options.length; i++) { // Loops through options
+            System.out.println((i + 1) + ". " + options[i] + " " + entityName); // Prints each option
+        }
+        System.out.println("0. Back to Main Menu"); // Option to return to main menu
+        System.out.print("Choose an option: "); // Prompts user for input
     }
 
-    // Gets and validates user menu choice
-    public int getUserChoice() {
+    public void displayEntityMenu(String entityName, String emoji) { // Displays standard entity menu
+        long startTime = logger.startOperation("Displaying " + entityName + " menu", Map.of("entity", entityName)); // Logs start of entity menu display
+        System.out.println("\n" + DIVIDER); // Prints divider
+        System.out.println(emoji + " " + entityName + " Menu:"); // Prints menu title with emoji
+        System.out.println(DIVIDER); // Prints divider
+        System.out.println("1. Create new " + entityName); // Option to create entity
+        System.out.println("2. View all " + entityName + "s"); // Option to view all entities
+        System.out.println("3. View single " + entityName); // Option to view single entity
+        System.out.println("4. Update " + entityName); // Option to update entity
+        System.out.println("5. Delete " + entityName); // Option to delete entity
+        System.out.println("0. Back to main menu"); // Option to return to main menu
+        System.out.print("Choose an option: "); // Prompts user for input
+        logger.success(entityName + " menu displayed successfully", startTime); // Logs successful menu display
+    }
+
+    public int getUserChoice() { // Gets user's menu choice
         try {
-            return Integer.parseInt(scanner.nextLine()); // Parse input as integer
-        } catch (NumberFormatException e) {
-            showError("Invalid input! Please enter a number."); // Show error for non-numeric input
-            logger.warn("Invalid menu choice input"); // Log warning
-            return -1; // Return invalid choice
+            return Integer.parseInt(scanner.nextLine()); // Parses user input to integer
+        } catch (NumberFormatException e) { // Handles invalid input
+            showError("Invalid input! Please enter a number."); // Shows error message
+            logger.warn("Invalid menu choice input"); // Logs warning
+            return -1; // Returns -1 for invalid input
         }
     }
 
-    // Displays success message with emoji
-    public void showSuccess(String message) {
-        System.out.println(SUCCESS_EMOJI + " " + message); // Print success message
-        logger.info(message); // Log message
+    public void showSuccess(String message) { // Displays success message
+        System.out.println(SUCCESS_EMOJI + " " + message); // Prints success message with emoji
+        logger.info(message); // Logs info message
     }
 
-    // Displays error message with emoji
-    public void showError(String message) {
-        System.out.println(ERROR_EMOJI + " " + message); // Print error message
-        logger.warn(message); // Log warning
+    public void showError(String message) { // Displays error message
+        System.out.println(ERROR_EMOJI + " " + message); // Prints error message with emoji
+        logger.warn(message); // Logs warning
     }
 
-    // Displays warning message with emoji
-    public void showWarning(String message) {
-        System.out.println(WARNING_EMOJI + " " + message); // Print warning message
-        logger.warn(message); // Log warning
+    public void showWarning(String message) { // Displays warning message
+        System.out.println(WARNING_EMOJI + " " + message); // Prints warning message with emoji
+        logger.warn(message); // Logs warning
     }
 
-    // Displays info message with emoji
-    public void showInfo(String message) {
-        System.out.println(INFO_EMOJI + " " + message); // Print info message
-        logger.info(message); // Log message
+    public void showInfo(String message) { // Displays info message
+        System.out.println(INFO_EMOJI + " " + message); // Prints info message with emoji
+        logger.info(message); // Logs info message
     }
 
-    // Displays welcome message
-    public void displayWelcome() {
-        long startTime = logger.startOperation("Displaying welcome message", Map.of()); // Log start
-        System.out.println("\n" + DIVIDER); // Print top divider
-        System.out.println("⚡ Sanaspace Hospital Database Console " + DOCTOR_EMOJI); // Print welcome message
-        System.out.println(DIVIDER); // Print bottom divider
-        logger.success("Welcome message displayed successfully", startTime); // Log success
+    public void displayWelcome() { // Displays welcome message
+        long startTime = logger.startOperation("Displaying welcome message", Map.of()); // Logs start of welcome display
+        System.out.println("\n" + DIVIDER); // Prints divider
+        System.out.println("Sanaspace Hospital Database Console"); // Prints welcome message
+        System.out.println(DIVIDER); // Prints divider
+        logger.success("Welcome message displayed successfully", startTime); // Logs successful welcome display
     }
 
-    // Displays exit message
-    public void displayExit() {
-        System.out.println("\n" + DIVIDER); // Print top divider
-        System.out.println("👋 Exiting Sanaspace. Goodbye!"); // Print exit message
-        System.out.println(DIVIDER); // Print bottom divider
-        logger.info("Exiting Console UI"); // Log exit
+    public void displayExit() { // Displays exit message
+        System.out.println("\n" + DIVIDER); // Prints divider
+        System.out.println("Exiting Sanaspace. Goodbye!"); // Prints exit message
+        System.out.println(DIVIDER); // Prints divider
+        logger.info("Exiting Console UI"); // Logs exit
     }
 }

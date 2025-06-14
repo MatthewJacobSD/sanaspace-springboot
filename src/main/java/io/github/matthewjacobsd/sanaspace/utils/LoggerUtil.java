@@ -8,45 +8,38 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.Map;
 
-// Consistent logging with extra context
 public class LoggerUtil {
 
-    private final Logger logger;
+    private final Logger logger; // SLF4J logger instance
 
-    // Sets up logger for the calling class
-    public LoggerUtil(Class<?> clazz) {
-        this.logger = LoggerFactory.getLogger(clazz);
+    public LoggerUtil(Class<?> clazz) { // Constructor with class for logger initialization
+        this.logger = LoggerFactory.getLogger(clazz); // Initializes logger for given class
     }
 
-    // Logs operation start with message and metadata
-    public long startOperation(String message, Map<String, Object> metadata) {
-        long startTime = System.currentTimeMillis();
-        logger.info("🚀 {} - {} - {}", message, metadata, Instant.now());
-        return startTime;
+    public long startOperation(String message, Map<String, Object> metadata) { // Logs start of operation
+        long startTime = System.currentTimeMillis(); // Captures start time
+        logger.info("[START] {} - {} - {}", message, metadata, Instant.now()); // Logs start message
+        return startTime; // Returns start time for duration tracking
     }
 
-    // Logs success with duration
-    public void success(String message, long startTime) {
-        logger.info("✅ {} - Took {}ms", message, System.currentTimeMillis() - startTime);
+    public void success(String message, long startTime) { // Logs successful operation
+        logger.info("[SUCCESS] {} - Took {}ms", message, System.currentTimeMillis() - startTime); // Logs success with duration
     }
 
-    // Logs error with context and stack trace snippet
-    public void error(String message, long startTime, Exception e, String requestInfo) {
-        String stackTrace = Arrays.stream(e.getStackTrace())
-                .limit(3) // Limit to top 3 lines
-                .map(StackTraceElement::toString)
-                .collect(Collectors.joining("\n"));
-        logger.error("❌ {}: {} - Request: {} - Took {}ms\nStack: {}",
+    public void error(String message, long startTime, Exception e, String requestInfo) { // Logs error with stack trace
+        String stackTrace = Arrays.stream(e.getStackTrace()) // Gets stack trace
+                .limit(3) // Limits to top 3 elements
+                .map(StackTraceElement::toString) // Converts to string
+                .collect(Collectors.joining("\n")); // Joins with newlines
+        logger.error("[ERROR] {}: {} - Request: {} - Took {}ms\nStack: {}", // Logs error details
                 message, e.getMessage(), requestInfo, System.currentTimeMillis() - startTime, stackTrace);
     }
 
-    // Logs general info
-    public void info(String message) {
-        logger.info("💡 {}", message);
+    public void info(String message) { // Logs info message
+        logger.info("[INFO] {}", message); // Logs info with prefix
     }
 
-    // Logs warning
-    public void warn(String message) {
-        logger.warn("⚠️ {}", message);
+    public void warn(String message) { // Logs warning message
+        logger.warn("[WARN] {}", message); // Logs warning with prefix
     }
 }

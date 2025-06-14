@@ -1,6 +1,7 @@
 package io.github.matthewjacobsd.sanaspace.services;
 
 import io.github.matthewjacobsd.sanaspace.exceptions.ExpVisit;
+import io.github.matthewjacobsd.sanaspace.models.Doctor;
 import io.github.matthewjacobsd.sanaspace.models.Visit;
 import io.github.matthewjacobsd.sanaspace.models.keys.VisitId;
 import io.github.matthewjacobsd.sanaspace.repositories.RVisit;
@@ -105,5 +106,12 @@ public class SVisit {
             visitR.delete(visit);
             return null;
         });
+    }
+
+    // Retrieves the most frequent doctor for a patient
+    public Page<Doctor> findMainDoctorForPatient(String patientId) {
+        long startTime = logger.startOperation("Fetching main doctor for patient...", Map.of("patientId", patientId));
+        return handleOperation("fetch main doctor", startTime, () ->
+                visitR.findMainDoctorByPatientId(patientId, PageRequest.of(0, 1)));
     }
 }
